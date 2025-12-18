@@ -1,0 +1,97 @@
+.container {
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  background-color: #fff;
+}
+
+.label {
+  display: block;
+  font-size: 11px;
+  font-weight: bold;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+.titleInput {
+  width: 100%;
+  padding: 5px 0;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-bottom: 2px solid #eee;
+  outline: none;
+}
+
+.divider {
+  margin: 15px 0;
+  border: none;
+  border-top: 1px solid #f5f5f5;
+}
+
+/* 列表特有样式 */
+.listItemCard {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #eee;
+}
+
+.itemHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.itemNumber {
+  font-size: 12px;
+  color: #bbb;
+  font-weight: bold;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: #ff4d4f;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.inputGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.smallInput, .smallTextArea, .textArea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.smallTextArea {
+  height: 80px;
+  resize: vertical;
+}
+
+.addButton {
+  width: 100%;
+  padding: 12px;
+  background-color: #fff;
+  border: 2px dashed #eee;
+  color: #666;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.addButton:hover {
+  border-color: #007bff;
+  color: #007bff;
+}
