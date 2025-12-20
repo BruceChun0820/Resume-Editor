@@ -1,97 +1,127 @@
+/* SectionEditor.module.css */
+
 .container {
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-main);
   padding: 20px;
   margin-bottom: 24px;
-  border-radius: 12px;
-  background-color: #fff;
+  border-radius: var(--border-radius);
+  background-color: var(--bg-card);
 }
 
+/* 统一 Label 风格 */
 .label {
   display: block;
   font-size: 11px;
-  font-weight: bold;
-  color: #999;
+  font-weight: 700;
+  color: var(--gray-500);
   margin-bottom: 4px;
+  text-transform: uppercase;
 }
 
+/* 板块大标题输入框 */
 .titleInput {
-  width: 100%;
-  padding: 5px 0;
+  /* 移除 width/padding 等，因为全局 input 已处理 */
   font-size: 18px;
   font-weight: 700;
+  color: var(--gray-800);
+  /* 这种“下划线”风格保留，但使用变量 */
   border: none;
-  border-bottom: 2px solid #eee;
-  outline: none;
+  border-bottom: 2px solid var(--gray-100);
+  border-radius: 0;
+  /* 标题框不需要圆角 */
+  padding: 5px 0;
+}
+
+.titleInput:focus {
+  border-bottom-color: var(--gray-800);
+  box-shadow: none;
+  /* 标题框不需要外发光 */
 }
 
 .divider {
   margin: 15px 0;
   border: none;
-  border-top: 1px solid #f5f5f5;
+  border-top: 1px solid var(--gray-100);
 }
 
-/* 列表特有样式 */
+/* 列表项卡片（比如某一段工作经历） */
 .listItemCard {
-  background: #f9f9f9;
+  background: var(--gray-50);
+  /* 浅灰底色 */
   padding: 15px;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   margin-bottom: 12px;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-main);
 }
 
 .itemHeader {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 10px;
 }
 
 .itemNumber {
   font-size: 12px;
-  color: #bbb;
-  font-weight: bold;
+  color: var(--gray-400);
+  font-weight: 700;
 }
 
 .deleteBtn {
   background: none;
   border: none;
   color: #ff4d4f;
+  /* 警告类颜色可以保留红色，或者用 var 定义 */
   cursor: pointer;
   font-size: 12px;
+  font-weight: 500;
+}
+
+.deleteBtn:hover {
+  text-decoration: underline;
 }
 
 .inputGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 10px;
 }
 
-.smallInput, .smallTextArea, .textArea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  box-sizing: border-box;
-}
-
+/* 💡 注意：.smallTextArea, .textArea 里的 border/padding/radius 全部删掉！ 
+   因为它们会自动继承 index.css 里的样式。这里只保留特殊尺寸逻辑。 */
 .smallTextArea {
   height: 80px;
-  resize: vertical;
 }
 
+/* “添加”按钮的风格升级 */
 .addButton {
   width: 100%;
   padding: 12px;
-  background-color: #fff;
-  border: 2px dashed #eee;
-  color: #666;
-  border-radius: 8px;
+  background-color: transparent;
+  border: 2px dashed var(--gray-200);
+  color: var(--gray-500);
+  border-radius: var(--border-radius);
   cursor: pointer;
   transition: all 0.2s;
+  font-weight: 500;
 }
 
 .addButton:hover {
-  border-color: #007bff;
-  color: #007bff;
+  border-color: var(--gray-400);
+  color: var(--gray-800);
+  background-color: var(--gray-50);
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-500);
+  letter-spacing: 0.5px;
 }

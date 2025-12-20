@@ -1,0 +1,44 @@
+/* BasicsEditor.module.css */
+
+.container {
+    background: var(--bg-card);
+    /* 使用变量 */
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border-main);
+    /* 使用变量 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.title {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    color: var(--gray-800);
+    border-left: 4px solid var(--gray-800);
+    /* 统一灰度风格 */
+    padding-left: 10px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.fieldLabel {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-500);
+    letter-spacing: 0.5px;
+}
+
+.fullWidth {
+    grid-column: span 2;
+}

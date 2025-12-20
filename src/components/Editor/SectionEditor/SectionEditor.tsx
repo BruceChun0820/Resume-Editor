@@ -37,6 +37,13 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
         // TypeScript 类型守卫：确认在此作用域内 section 是 ListSection
         if (section.type !== 'list') return null;
 
+        //ListItem 中的属性映射
+        const config: { key: keyof ListItem; label: string }[] = [
+            { key: 'title', label: '名称' },
+            { key: 'subtitle', label: '详情' },
+            { key: 'dateRange', label: '时间范围' },
+        ];
+
         // 更新列表中的某一项
         const updateItem = (index: number, field: keyof ListItem, value: string) => {  //keyof表示field只能是ListItem的属性名之一
             const newItems = [...section.items]; // 1. 克隆数组
@@ -61,7 +68,7 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
 
         return (
             <div className={styles.listContainer}>
-                 {/* 得到结果：.map() 函数执行完后，会返回一个 数组，数组里面装满了你定义的那些 div（即多个 ListItemCard）。 */}
+                {/* 得到结果：.map() 函数执行完后，会返回一个 数组，数组里面装满了你定义的那些 div（即多个 ListItemCard）。 */}
                 {section.items.map((item, index) => (
                     <div key={item.id} className={styles.listItemCard}>
                         {/* React 会用key给每一个 div 盖上一个唯一的戳，如果没有key，会导致元素混乱 */}
@@ -74,23 +81,19 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
                                 删除
                             </button>
                         </div>
-
                         <div className={styles.inputGrid}>
-                            <input
-                                className={styles.smallInput}
-                                value={item.title}
-                                placeholder="名称 (如：Google)"
-                                // 这种情况下用箭头函数接受事件对象，再传给 updateItem
-                                onChange={(e) => updateItem(index, 'title', e.target.value)}
-                            />
-                            <input
-                                className={styles.smallInput}
-                                value={item.subtitle || ''}
-                                placeholder="详情 (如：软件工程师)"
-                                onChange={(e) => updateItem(index, 'subtitle', e.target.value)}
-                            />
+                            {config.map((cfg) => (
+                                <div key={cfg.key} className={styles.inputGroup}>
+                                    <label className={styles.fieldLabel}>{cfg.label}</label>
+                                    <input
+                                        value={item[cfg.key] || ''}
+                                        placeholder={`请输入${cfg.label} (如：${cfg.key === 'dateRange' ? '2020/7 - 2023/7' : cfg.key === 'title' ? 'Google' : '软件工程师'})`}
+                                        onChange={(e) => updateItem(index, cfg.key, e.target.value)}
+                                    />
+                                </div>
+                            ))}
                         </div>
-
+                        <label className={styles.fieldLabel}>工作职责</label>
                         <textarea
                             className={styles.smallTextArea}
                             value={item.description || ''}

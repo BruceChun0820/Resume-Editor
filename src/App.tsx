@@ -15,13 +15,18 @@ function App() {
     setResume({ ...resume, sections: newSections });
   }
 
+  const handleBasicsUpdate = (updatedBasics: Resume['basics']) => {
+    setResume({ ...resume, basics: updatedBasics });
+  }
+
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
-      
+
       {/* 左侧：抽离后的编辑器侧边栏 */}
-      <EditorSidebar 
-        resume={resume} 
-        onSectionUpdate={handleSectionUpdate} 
+      <EditorSidebar
+        resume={resume}
+        onSectionUpdate={handleSectionUpdate}
+        onBasicsUpdate={handleBasicsUpdate}
       />
 
       {/* 右侧：抽离后的预览视图 */}

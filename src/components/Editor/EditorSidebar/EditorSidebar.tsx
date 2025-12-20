@@ -1,16 +1,23 @@
 import type { Resume, ResumeSection } from "../../../types/resume";
 import { SectionEditor } from "../SectionEditor/SectionEditor";
+import { BasicsEditor } from "../BasicsEditor/BasicsEditor";
 import styles from "./EditorSidebar.module.css";
 interface EditorSidebarProps {
     resume: Resume;
     onSectionUpdate: (updatedSection: ResumeSection) => void;
+    onBasicsUpdate: (updatedBasics: Resume['basics']) => void;
 }
 
-export const EditorSidebar = ({ resume, onSectionUpdate }: EditorSidebarProps) => {
+export const EditorSidebar = ({ resume, onSectionUpdate, onBasicsUpdate }: EditorSidebarProps) => {
     return (
         <div className={styles.sidebar}>
 
             <h2 className={styles.title}>简历编辑器</h2>
+
+            <BasicsEditor
+                basics={resume.basics}
+                onUpdate={onBasicsUpdate}
+            />
 
             <div className={styles.sectionList}>
                 {/* 如果箭头函数后面直接跟 ( 或直接写内容，它会自动把结果 return 出来 */}

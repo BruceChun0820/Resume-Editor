@@ -11,7 +11,9 @@ export const ResumePreview = ({ resume }: ResumePreviewProps) => {
       {/* 1. 基础信息展示 */}
       <header>
         <h1 className={styles.name}>{resume.basics.name}</h1>
-        <p className={styles.jobTitle}>{resume.basics.title}</p>
+        <span className={styles.jobTitle}>{resume.basics.title}</span>
+        <span className={styles.jobTitle}>{resume.basics.email}</span>
+        <p className={styles.jobTitle}>{resume.basics.phone}</p>
       </header>
       
       <hr className={styles.divider} />
@@ -21,7 +23,6 @@ export const ResumePreview = ({ resume }: ResumePreviewProps) => {
         <section key={section.id} className={styles.section}>
           <h3 className={styles.sectionTitle}>{section.title}</h3>
           
-          {/* 段留渲染：使用了常用的短路逻辑 && */}
           {section.type === 'paragraph' && (
             <p className={styles.paragraph}>
               {section.content}
