@@ -1,39 +1,35 @@
-import { useState } from 'react'
 import './App.css'
-import { initialResume } from './data/initialResume'
-import type { Resume, ResumeSection } from './types/resume'
 import { EditorSidebar } from './components/Editor/EditorSidebar/EditorSidebar'
 import { ResumePreview } from './components/Preview/ResumePreview'
+import { useResume } from './hooks/useResume' // 引入我们刚写的 Hook
 
 function App() {
-  const [resume, setResume] = useState<Resume>(initialResume);
-
-  const handleSectionUpdate = (updatedSection: ResumeSection) => {
-    const newSections = resume.sections.map(section =>
-      section.id === updatedSection.id ? updatedSection : section
-    );
-    setResume({ ...resume, sections: newSections });
-  }
-
-  const handleBasicsUpdate = (updatedBasics: Resume['basics']) => {
-    setResume({ ...resume, basics: updatedBasics });
-  }
+  // 一行代码，获取所有数据和能力！
+  const { 
+    resume, 
+    updateBasics, 
+    updateSection, 
+    addSection, 
+    deleteSection, 
+    resetResume 
+  } = useResume();
 
   return (
-    <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
-
-      {/* 左侧：抽离后的编辑器侧边栏 */}
+    <div className="app-container">
+      {/* 左侧编辑器 */}
       <EditorSidebar
         resume={resume}
-        onSectionUpdate={handleSectionUpdate}
-        onBasicsUpdate={handleBasicsUpdate}
+        onBasicsUpdate={updateBasics}
+        onSectionUpdate={updateSection}
+        onAddSection={addSection}      // 传入添加能力
+        onDeleteSection={deleteSection} // 传入删除能力
+        onResumeReset={resetResume}
       />
 
-      {/* 右侧：抽离后的预览视图 */}
-      <div style={{ flex: 1, height: '100vh', overflowY: 'auto', backgroundColor: '#525659', padding: '40px 0' }}>
+      {/* 右侧预览区 */}
+      <div className="preview-container">
         <ResumePreview resume={resume} />
       </div>
-
     </div>
   );
 }

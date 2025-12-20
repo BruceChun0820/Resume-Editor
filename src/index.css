@@ -1,16 +1,71 @@
+/* src/index.css */
+
+/* =========================================
+   1. CSS 变量与主题定义
+   (这是整个 App 的配色基础，必须保留)
+   ========================================= */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* --- 字体设置 (保留了 Vite 的优化设置) --- */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* --- 基础色阶 (Grayscale Palette) --- */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-950: #030712;
 
+  /* --- 语义化变量 --- */
+  --bg-app: var(--gray-100);
+  --bg-card: #ffffff;
+  --border-main: var(--gray-200);
+  --text-main: var(--gray-800);
+  --text-muted: var(--gray-500);
+  --border-radius: 6px;
+
+  /* 强制浅色模式 (Light Mode) 
+     简历编辑器通常使用浅色背景，以匹配白纸预览 */
+  color-scheme: light;
+  color: var(--text-main);
+  background-color: var(--bg-app);
+
+  /* 字体渲染优化 */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* =========================================
+   2. 全局重置 (Resets)
+   ========================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ⚠️ 关键修改：移除 Vite 默认的 display: flex 和 place-items: center 
+   否则你的 App 会被强行挤在屏幕中间 */
+body {
+  display: block; 
+}
+
+#root {
+  height: 100%;
+  isolation: isolate;
 }
 
 a {
@@ -22,47 +77,92 @@ a:hover {
   color: #535bf2;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+/* =========================================
+   3. 全局组件：输入框 (Inputs)
+   ========================================= */
+input, textarea {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  color: var(--text-main);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit; /* 继承全局字体 */
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+input:hover, textarea:hover {
+  border-color: var(--gray-400);
 }
 
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--gray-600);
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(55, 65, 81, 0.1);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+
+::placeholder {
+  color: var(--gray-300);
+}
+
+/* =========================================
+   4. 全局组件：按钮 (Buttons)
+   ========================================= */
+/* 这里的样式会覆盖 Vite 默认的黑色按钮 */
 button {
-  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  border-radius: var(--border-radius);
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+  padding: 0.6em 1.2em; /* 保留 Vite 的内边距设定，手感不错 */
+  font-size: 14px;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  background-color: transparent; /* 默认背景透明，交给具体类名控制 */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* 样式变体：危险操作 (红色) */
+.btn-danger {
+  color: #ef4444; 
+  background-color: #fff;
+  border-color: #fee2e2; 
+}
+
+.btn-danger:hover {
+  background-color: #fef2f2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+/* 样式变体：次要操作 (白底灰边) */
+.btn-secondary {
+  color: var(--gray-600);
+  background-color: #fff;
+  border-color: var(--border-main);
+}
+
+.btn-secondary:hover {
+  border-color: var(--gray-400);
+  color: var(--gray-800);
+  background-color: var(--gray-50);
+}
+
+/* 移除 Vite 默认的 focus-visible 亮色轮廓，改用我们自己的 focus 样式 */
+button:focus,
+button:focus-visible {
+  outline: none; 
 }

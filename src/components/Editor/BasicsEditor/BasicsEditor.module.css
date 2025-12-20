@@ -1,28 +1,104 @@
-/* BasicsEditor.module.css */
-
 .container {
     background: var(--bg-card);
-    /* 使用变量 */
     border-radius: 8px;
-    padding: 16px;
+    padding: 20px;
     margin-bottom: 24px;
     border: 1px solid var(--border-main);
-    /* 使用变量 */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .title {
-    margin: 0 0 16px 0;
+    margin: 0 0 20px 0;
     font-size: 16px;
     color: var(--gray-800);
     border-left: 4px solid var(--gray-800);
-    /* 统一灰度风格 */
     padding-left: 10px;
+    line-height: 1;
 }
 
+/* 核心：包装容器，控制头像和右侧网格的排布 */
+.editorBody {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start; /* 顶部对齐 */
+}
+
+/* --- 头像区域 (左侧) --- */
+.avatarSection {
+    flex-shrink: 0; /* 禁止头像被挤压 */
+}
+
+.uploadBtn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    border: 2px dashed var(--gray-300);
+    border-radius: 50%;
+    color: var(--gray-500);
+    cursor: pointer;
+    background-color: var(--gray-50);
+    gap: 8px;
+    font-size: 11px;
+    transition: all 0.2s ease;
+}
+
+.uploadBtn:hover {
+    border-color: var(--gray-500);
+    color: var(--gray-800);
+    background-color: var(--gray-100);
+}
+
+.hiddenInput {
+    display: none;
+}
+
+.previewContainer {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.avatarPreview {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--gray-100);
+    background-color: var(--gray-50);
+}
+
+.removeBtn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ff4d4f;
+    color: white;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.removeBtn:hover {
+    transform: scale(1.1);
+    background: #ff7875;
+}
+
+/* --- 输入框区域 (右侧) --- */
 .grid {
+    flex: 1; /* 自动占据右侧剩余空间 */
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr; /* 标准两列布局 */
     gap: 16px;
 }
 
@@ -40,5 +116,5 @@
 }
 
 .fullWidth {
-    grid-column: span 2;
+    grid-column: span 2; /* 邮箱等需要撑满全行的字段 */
 }

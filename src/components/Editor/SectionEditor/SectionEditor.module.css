@@ -1,14 +1,28 @@
-/* SectionEditor.module.css */
-
 .container {
   border: 1px solid var(--border-main);
   padding: 20px;
   margin-bottom: 24px;
   border-radius: var(--border-radius);
   background-color: var(--bg-card);
+  transition: all 0.2s;
 }
 
-/* 统一 Label 风格 */
+.container:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+/* --- 板块头部布局 --- */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* 顶部对齐 */
+  gap: 16px;
+}
+
+.titleGroup {
+  flex: 1; /* 让标题输入框占据剩余空间 */
+}
+
 .label {
   display: block;
   font-size: 11px;
@@ -18,24 +32,21 @@
   text-transform: uppercase;
 }
 
-/* 板块大标题输入框 */
 .titleInput {
-  /* 移除 width/padding 等，因为全局 input 已处理 */
+  width: 100%;
   font-size: 18px;
   font-weight: 700;
   color: var(--gray-800);
-  /* 这种“下划线”风格保留，但使用变量 */
   border: none;
   border-bottom: 2px solid var(--gray-100);
   border-radius: 0;
-  /* 标题框不需要圆角 */
   padding: 5px 0;
+  background: transparent;
 }
 
 .titleInput:focus {
   border-bottom-color: var(--gray-800);
   box-shadow: none;
-  /* 标题框不需要外发光 */
 }
 
 .divider {
@@ -44,10 +55,9 @@
   border-top: 1px solid var(--gray-100);
 }
 
-/* 列表项卡片（比如某一段工作经历） */
+/* --- 列表卡片样式 --- */
 .listItemCard {
   background: var(--gray-50);
-  /* 浅灰底色 */
   padding: 15px;
   border-radius: var(--border-radius);
   margin-bottom: 12px;
@@ -67,50 +77,11 @@
   font-weight: 700;
 }
 
-.deleteBtn {
-  background: none;
-  border: none;
-  color: #ff4d4f;
-  /* 警告类颜色可以保留红色，或者用 var 定义 */
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.deleteBtn:hover {
-  text-decoration: underline;
-}
-
 .inputGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr; /* 两列布局 */
   gap: 12px;
-  margin-bottom: 10px;
-}
-
-/* 💡 注意：.smallTextArea, .textArea 里的 border/padding/radius 全部删掉！ 
-   因为它们会自动继承 index.css 里的样式。这里只保留特殊尺寸逻辑。 */
-.smallTextArea {
-  height: 80px;
-}
-
-/* “添加”按钮的风格升级 */
-.addButton {
-  width: 100%;
-  padding: 12px;
-  background-color: transparent;
-  border: 2px dashed var(--gray-200);
-  color: var(--gray-500);
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: all 0.2s;
-  font-weight: 500;
-}
-
-.addButton:hover {
-  border-color: var(--gray-400);
-  color: var(--gray-800);
-  background-color: var(--gray-50);
+  margin-bottom: 12px;
 }
 
 .inputGroup {
@@ -124,4 +95,37 @@
   font-weight: 600;
   color: var(--gray-500);
   letter-spacing: 0.5px;
+}
+
+/* 描述文本框优化 */
+.descriptionArea {
+  /* 继承全局 input 样式 */
+  min-height: 100px; /* 增加高度，方便写长文 */
+  resize: vertical;  /* 允许用户拖拽调整高度 */
+  line-height: 1.5;
+}
+
+/* --- 底部添加按钮 --- */
+.addButton {
+  width: 100%;
+  padding: 12px;
+  background-color: transparent;
+  /* 保持虚线风格，暗示这是个插槽 */
+  border: 2px dashed var(--gray-200); 
+  color: var(--gray-500);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.addButton:hover {
+  border-color: var(--gray-400);
+  color: var(--gray-800);
+  background-color: var(--gray-50);
 }
