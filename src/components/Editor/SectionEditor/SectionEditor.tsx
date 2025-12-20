@@ -8,8 +8,8 @@ interface SectionEditorProps {
 
 export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
 
-    // --- 逻辑处理：标题更新 ---
-    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // --- 逻辑处理：SectionTitle更新 ---
+    const handleSectionTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onUpdate({ ...section, title: e.target.value });
     };
 
@@ -38,11 +38,11 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
         if (section.type !== 'list') return null;
 
         // 更新列表中的某一项
-        const updateItem = (index: number, field: keyof ListItem, value: string) => {
+        const updateItem = (index: number, field: keyof ListItem, value: string) => {  //keyof表示field只能是ListItem的属性名之一
             const newItems = [...section.items]; // 1. 克隆数组
             newItems[index] = {                  // 2. 找到并克隆该项
                 ...newItems[index],
-                [field]: value                     // 3. 动态更新属性
+                [field]: value                     // 3. 用value覆盖掉field对应的属性
             };
             onUpdate({ ...section, items: newItems }); // 4. 汇报总店
         };
@@ -61,8 +61,10 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
 
         return (
             <div className={styles.listContainer}>
+                 {/* 得到结果：.map() 函数执行完后，会返回一个 数组，数组里面装满了你定义的那些 div（即多个 ListItemCard）。 */}
                 {section.items.map((item, index) => (
                     <div key={item.id} className={styles.listItemCard}>
+                        {/* React 会用key给每一个 div 盖上一个唯一的戳，如果没有key，会导致元素混乱 */}
                         <div className={styles.itemHeader}>
                             <span className={styles.itemNumber}>#{index + 1}</span>
                             <button
@@ -78,6 +80,7 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
                                 className={styles.smallInput}
                                 value={item.title}
                                 placeholder="名称 (如：Google)"
+                                // 这种情况下用箭头函数接受事件对象，再传给 updateItem
                                 onChange={(e) => updateItem(index, 'title', e.target.value)}
                             />
                             <input
@@ -112,7 +115,8 @@ export const SectionEditor = ({ section, onUpdate }: SectionEditorProps) => {
                 <input
                     className={styles.titleInput}
                     value={section.title}
-                    onChange={handleTitleChange}
+                    // 该情况下函数的第一个参数必须接收一个事件对象
+                    onChange={handleSectionTitleChange}
                 />
             </div>
 

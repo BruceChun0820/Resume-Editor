@@ -1,6 +1,6 @@
 import type { Resume, ResumeSection } from "../../../types/resume";
 import { SectionEditor } from "../SectionEditor/SectionEditor";
-import style from './EditorSidebar.module.css';
+import styles from "./EditorSidebar.module.css";
 interface EditorSidebarProps {
     resume: Resume;
     onSectionUpdate: (updatedSection: ResumeSection) => void;
@@ -8,18 +8,13 @@ interface EditorSidebarProps {
 
 export const EditorSidebar = ({ resume, onSectionUpdate }: EditorSidebarProps) => {
     return (
-        <div style={{
-            width: '40%',
-            height: '100vh',
-            overflowY: 'auto',
-            padding: '20px',
-            borderRight: '1px solid #ddd',
-            backgroundColor: '#f8f9fa',
-            boxSizing: 'border-box'
-        }}>
-            <h2 style={{ marginBottom: '20px', color: '#333' }}>简历编辑器</h2>
+        <div className={styles.sidebar}>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <h2 className={styles.title}>简历编辑器</h2>
+
+            <div className={styles.sectionList}>
+                {/* 如果箭头函数后面直接跟 ( 或直接写内容，它会自动把结果 return 出来 */}
+                {/* 一旦有了 {}，你就必须显式地写下 return 关键字，{}可以有一些复杂的逻辑处理 */}
                 {resume.sections.map((section) => (
                     <SectionEditor
                         key={section.id}
@@ -29,10 +24,9 @@ export const EditorSidebar = ({ resume, onSectionUpdate }: EditorSidebarProps) =
                 ))}
             </div>
 
-            <div style={{ marginTop: '40px', textAlign: 'center', color: '#999', fontSize: '12px' }}>
+            <div className={styles.footer}>
                 已自动保存到本地内存
             </div>
         </div>
-
     );
 }

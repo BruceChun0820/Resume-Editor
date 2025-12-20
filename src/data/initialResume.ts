@@ -2,10 +2,10 @@ import type { Resume } from "../types/resume";
 
 export const initialResume: Resume = {
     basics: {
-        name: "John Doe",
+        name: "Bruce Chun",
         title: "Software Engineer",
-        email: "john.doe@example.com",
-        phone: "+1 (555) 123-4567",
+        email: "brucechun0@gmail.com",
+        phone: "+86 19178295494",
         location: "San Francisco, CA"
     },
     sections: [
