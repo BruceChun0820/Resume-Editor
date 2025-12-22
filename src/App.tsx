@@ -4,7 +4,6 @@ import { ResumePreview } from './components/Preview/ResumePreview'
 import { useResume } from './hooks/useResume' // 引入我们刚写的 Hook
 
 function App() {
-  // 一行代码，获取所有数据和能力！
   const { 
     resume, 
     updateBasics, 

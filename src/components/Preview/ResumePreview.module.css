@@ -2,14 +2,26 @@
 
 .paper {
   width: 210mm;
-  min-height: 297mm;
-  background-color: #fff;
-  padding: 15mm 20mm;
+  /* 移除固定高度，允许内容自由增长 */
+  min-height: 297mm; 
+  padding: 15mm;
   margin: 0 auto;
-  color: var(--gray-800);
-  line-height: 1.5;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  /* 给纸张加一点投影，视觉更好 */
+  background-color: #fff;
+  position: relative;
+  box-sizing: border-box;
+  
+  /* 每隔 297mm 画一条淡淡的虚线，提示换页位置 */
+  background-image: linear-gradient(to bottom, 
+    transparent 296mm, 
+    #e5e7eb 296mm, 
+    #e5e7eb 297mm, 
+    transparent 297mm
+  );
+  background-size: 100% 297mm;
+  
+  /* 配合内容流向 */
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
@@ -35,28 +47,21 @@
 }
 
 .basicsGrid {
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  gap: 16px;
-  color: var(--gray-600);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;                       
+  color: var(--gray-600);              
   margin-top: 12px;
-  font-size: 14px;
-}
-
-/* 小圆点分隔符 */
-.contactItem:not(:last-child)::after {
-  content: "•";
-  margin-left: 10px;
-  color: var(--gray-300);
-  pointer-events: none;
+  font-size: 16px;
+  width: 100%;
 }
 
 .contactItem {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 6px;
   color: var(--gray-600);
+  white-space: nowrap;
 }
 
 .contactItem svg {
@@ -71,6 +76,7 @@
 }
 
 .section {
+  break-inside: auto;
   margin-bottom: 25px;
 }
 
@@ -82,6 +88,7 @@
   border-bottom: 1px solid var(--gray-200);
   padding-bottom: 4px;
   margin-bottom: 12px;
+  break-after: avoid;
 }
 
 /* 列表容器 */
@@ -93,6 +100,7 @@
 
 /* 每一项经历的容器 */
 .listItem {
+  break-inside: auto;
   margin-bottom: 12px;
   /* 稍微调小一点，让段落看起来更紧凑 */
 }
@@ -153,4 +161,52 @@
   /* 圆角矩形更商务，也可以用 50% 变圆形 */
   object-fit: cover;
   border: 1px solid var(--gray-200);
+}
+
+
+@media print {
+  .paper {
+    /* 1. 纸张基础重置 */
+    position: static !important;
+    width: 210mm !important;
+    /* 锁定 A4 宽度 */
+    height: auto !important;
+    min-height: 297mm !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background-image: none !important;
+
+    /* 2. 强制显示头像颜色 */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background-color: white !important;
+  }
+
+  /* 3. 分页逻辑控制 */
+  .section {
+    /* 告诉浏览器：如果当前页放不下这个板块，请整体移到下一页 */
+    break-inside: auto;
+    page-break-inside: auto;
+    margin-bottom: 20px;
+    display: block !important;
+    /* 确保它是块级，否则分页失效 */
+  }
+
+  .listItem {
+    break-inside: auto;
+    page-break-inside: auto;
+    margin-bottom: 8px;
+  }
+
+  .sectionTitle {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .basicsGrid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+  }
 }

@@ -8,17 +8,11 @@
 
 /* 右侧预览区域容器 */
 .preview-container {
-  flex: 1; /* 占据剩余空间 */
-  height: 100vh;
-  overflow-y: auto; /* 只有这个区域可以滚动 */
-  
-  /* 经典的 PDF 阅读器深灰色背景 */
-  background-color: #525659; 
-  
-  /* 使用 Flex 让内部的 A4 纸张始终水平居中 */
+  flex: 1;
+  background-color: #525659; /* 模仿 PDF 阅读器的深灰色背景 */
+  overflow-y: auto;
+  padding: 40px 20px;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* 顶部对齐，方便向下滚动 */
-  
-  padding: 40px 0; /* 给上下留点呼吸空间 */
+  align-items: flex-start; /* 从顶部开始排列 */
 }

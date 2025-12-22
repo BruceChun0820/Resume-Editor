@@ -43,9 +43,6 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* =========================================
-   2. 全局重置 (Resets)
-   ========================================= */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -57,8 +54,6 @@ html, body {
   height: 100%;
 }
 
-/* ⚠️ 关键修改：移除 Vite 默认的 display: flex 和 place-items: center 
-   否则你的 App 会被强行挤在屏幕中间 */
 body {
   display: block; 
 }
@@ -78,7 +73,7 @@ a:hover {
 }
 
 /* =========================================
-   3. 全局组件：输入框 (Inputs)
+    全局组件：输入框 (Inputs)
    ========================================= */
 input, textarea {
   display: block;
@@ -115,7 +110,7 @@ textarea {
 }
 
 /* =========================================
-   4. 全局组件：按钮 (Buttons)
+    全局组件：按钮 (Buttons)
    ========================================= */
 /* 这里的样式会覆盖 Vite 默认的黑色按钮 */
 button {
@@ -148,6 +143,19 @@ button {
   color: #dc2626;
 }
 
+/* 样式变体：主要操作 黑底白字 */
+.btn-primary {
+  color: #fff;
+  background-color: var(--gray-800);
+  border-color: var(--gray-800);
+}
+
+.btn-primary:hover {
+  background-color: #000;
+  border-color: #000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
 /* 样式变体：次要操作 (白底灰边) */
 .btn-secondary {
   color: var(--gray-600);
@@ -165,4 +173,51 @@ button {
 button:focus,
 button:focus-visible {
   outline: none; 
+}
+
+/* src/index.css */
+
+/* ... 前面的基础样式保持不变 ... */
+
+@media print {
+  /* 1. 隐藏编辑器侧边栏和所有交互 UI */
+  aside,
+  .sidebar,
+  button,
+  .dropdownWrapper,
+  ::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* 2. 解除 App 容器的 Flex 限制和溢出隐藏 */
+  .app-container {
+    display: block !important;   /* 禁用 flex */
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* 3. 关键：解除预览容器的滚动限制 */
+  .preview-container {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;     /* 必须让高度随内容伸展 */
+    overflow: visible !important; /* 必须让溢出可见 */
+    padding: 0 !important;
+    margin: 0 !important;
+    background: none !important;
+  }
+
+  /* 4. 基础页面重置 */
+  html, body, #root {
+    height: auto !important;
+    overflow: visible !important;
+    background-color: white !important;
+    margin: 0 !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 15mm; /* 标准 A4 打印边距 */
+  }
 }
