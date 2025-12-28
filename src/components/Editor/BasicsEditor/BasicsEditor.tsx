@@ -1,35 +1,40 @@
 import styles from "./BasicsEditor.module.css";
 import type { Resume } from "../../../types/resume";
-import { fileToBase64 } from "../../../utils/imageHelper";
 import { Upload, X } from "lucide-react";
 
 interface BasicsEditorProps {
     basics: Resume['basics'];
-    onUpdate: (updatedBasics: Resume['basics']) => void;
+    // 文本更新：保持原样，直接回传完整的 basics 对象
+    onUpdate: (updatedBasics: Resume['basics']) => void; 
+    // 图片上传：只负责传出 File 对象，不处理转换
+    onImageUpload: (file: File) => void;
+    // 图片删除：只负责触发信号
+    onImageRemove: () => void;
 }
 
-export const BasicsEditor = ({ basics, onUpdate }: BasicsEditorProps) => {
+export const BasicsEditor = ({ 
+    basics, 
+    onUpdate, 
+    onImageUpload, 
+    onImageRemove 
+}: BasicsEditorProps) => {
+
+    // 处理输入框变化
     const handleChange = (field: keyof Resume['basics'], value: string) => {
         onUpdate({ ...basics, [field]: value });
     };
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 处理文件选择事件
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (!file) return;
-
-        try {
-            const base64 = await fileToBase64(file);
-            onUpdate({ ...basics, image: base64 });
-        } catch (error: any) {
-            alert(error.message);
+        if (file) {
+            onImageUpload(file); // 直接把“炸弹”扔给父组件，自己不拆
         }
+        // 建议清空 input value，否则选同一张图不会触发 onChange
+        e.target.value = ''; 
     };
 
-    // 删除图片
-    const removeImage = () => {
-        onUpdate({ ...basics, image: undefined });
-    };
-
+    // 配置项：使得 JSX 更简洁
     const config: { key: keyof Resume['basics']; label: string; fullWidth?: boolean }[] = [
         { key: 'name', label: '姓名' },
         { key: 'title', label: '求职意向' },
@@ -42,15 +47,17 @@ export const BasicsEditor = ({ basics, onUpdate }: BasicsEditorProps) => {
         <div className={styles.container}>
             <h3 className={styles.title}>个人信息</h3>
 
-            {/* 关键：新增这个 editorBody 包装层来匹配 CSS 中的 flex 布局 */}
             <div className={styles.editorBody}>
-
-                {/* 1. 左侧：头像区域 */}
+                {/* 左侧：头像区域 */}
                 <div className={styles.avatarSection}>
                     {basics.image ? (
                         <div className={styles.previewContainer}>
                             <img src={basics.image} alt="Avatar" className={styles.avatarPreview} />
-                            <button className={styles.removeBtn} onClick={removeImage} title="删除照片">
+                            <button 
+                                className={styles.removeBtn} 
+                                onClick={onImageRemove} // 直接调用 Props
+                                title="删除照片"
+                            >
                                 <X size={14} />
                             </button>
                         </div>
@@ -61,14 +68,14 @@ export const BasicsEditor = ({ basics, onUpdate }: BasicsEditorProps) => {
                             <input
                                 type="file"
                                 accept="image/png, image/jpeg, image/jpg"
-                                onChange={handleImageUpload}
+                                onChange={handleFileChange}
                                 className={styles.hiddenInput}
                             />
                         </label>
                     )}
                 </div>
 
-                {/* 2. 右侧：输入框网格区域 */}
+                {/* 右侧：输入框网格区域 */}
                 <div className={styles.grid}>
                     {config.map((item) => (
                         <div
@@ -84,7 +91,7 @@ export const BasicsEditor = ({ basics, onUpdate }: BasicsEditorProps) => {
                         </div>
                     ))}
                 </div>
-            </div> 
+            </div>
         </div>
     );
 }
