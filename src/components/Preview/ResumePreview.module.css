@@ -1,25 +1,23 @@
-/* ResumePreview.module.css */
-
 .paper {
   width: 210mm;
-  /* 移除固定高度，允许内容自由增长 */
-  min-height: 297mm; 
+  min-height: 297mm;
   padding: 15mm;
   margin: 0 auto;
   background-color: #fff;
   position: relative;
   box-sizing: border-box;
-  
-  /* 每隔 297mm 画一条淡淡的虚线，提示换页位置 */
-  background-image: linear-gradient(to bottom, 
-    transparent 296mm, 
-    #e5e7eb 296mm, 
-    #e5e7eb 297mm, 
-    transparent 297mm
-  );
+
+  /* 显式指定字体 */
+  font-family: "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", "Noto Sans CJK SC", "Heiti SC", sans-serif;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+
+  background-image: linear-gradient(to bottom,
+      transparent 296mm,
+      #e5e7eb 296mm,
+      #e5e7eb 297mm,
+      transparent 297mm);
   background-size: 100% 297mm;
-  
-  /* 配合内容流向 */
   display: flex;
   flex-direction: column;
 }
@@ -27,20 +25,12 @@
 .header {
   display: flex;
   align-items: center;
-  /* 垂直居中 */
   gap: 24px;
-  /* 图片和文字的间距 */
-  margin-bottom: 20px;
-}
-
-.headerContent {
-  flex: 1;
-  text-align: left;
-  /* 或者 center */
+  margin-bottom: 0;
 }
 
 .name {
-  margin: 0 0 10px 0;
+  margin: 0 0 4px 0;
   font-size: 32px;
   font-weight: 800;
   letter-spacing: -0.5px;
@@ -49,9 +39,9 @@
 .basicsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;                       
-  color: var(--gray-600);              
-  margin-top: 12px;
+  gap: 6px 25px;
+  color: var(--gray-800);
+  margin-top: 20px;
   font-size: 16px;
   width: 100%;
 }
@@ -60,70 +50,65 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var(--gray-600);
   white-space: nowrap;
 }
 
 .contactItem svg {
   color: var(--gray-800);
-  flex-shrink: 0;
+  print-color-adjust: exact;
 }
 
 .divider {
   border: none;
   border-top: 2px solid var(--gray-800);
-  margin: 20px 0;
+  margin: 12px 0;
 }
 
 .section {
   break-inside: auto;
-  margin-bottom: 25px;
+  margin-bottom: 0px;
 }
 
 .sectionTitle {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--gray-800);
   text-transform: uppercase;
   border-bottom: 1px solid var(--gray-200);
-  padding-bottom: 4px;
-  margin-bottom: 12px;
+  padding-bottom: 2px;
+  margin-bottom: 6px;
   break-after: avoid;
 }
 
-/* 列表容器 */
 .list {
-  list-style: none;
+  list-style: none !important;
   padding: 0;
   margin: 0;
 }
 
-/* 每一项经历的容器 */
 .listItem {
   break-inside: auto;
-  margin-bottom: 12px;
-  /* 稍微调小一点，让段落看起来更紧凑 */
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px dashed var(--gray-200);
 }
 
-/* 标题行 */
+.listItem:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
 .itemHeaderLine {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   gap: 20px;
 }
 
-.itemTitleGroup {
-  display: flex;
-  gap: 8px;
-  align-items: baseline;
-  flex: 1;
-  flex-wrap: wrap;
-}
-
 .itemTitle {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--gray-800);
 }
@@ -138,75 +123,90 @@
   font-size: 13px;
   color: var(--gray-500);
   font-weight: 500;
-  white-space: nowrap;
 }
 
 /* 描述文本 (兼顾 List 描述 和 Paragraph 段落) */
 .itemDescription {
-  margin: 2px 0 0 0;
+  margin: 12px 0;
   font-size: 14px;
-  color: var(--gray-700);
+  color: var(--gray-800);
   line-height: 1.6;
   white-space: pre-wrap;
-  /* 保留换行符 */
   text-align: justify;
-  /* 关键：两端对齐，让大段文字看起来像报刊一样整齐 */
+}
+
+/* 控制两个 bullet 之间的距离 */
+.itemDescription :global(li) {
+  /* 如果觉得还是远，可以设置负边距，例如 -2px，但通常 0px 就很紧凑了 */
+  margin-bottom: 4px !important; 
+  /* 确保列表内的文字也遵循 1.6 行高 */
+  line-height: 1.6 !important;
+}
+
+/* 段落间距：设为 0，防止 bullet 内部换行产生大空隙 */
+.itemDescription :global(p) {
+  margin: 0 !important;
+  padding: 0.1px !important;
 }
 
 /* 预览区头像样式 */
 .avatar {
   width: 120px;
-  /* 或者 25mm */
   height: 160px;
-  /* 圆角矩形更商务，也可以用 50% 变圆形 */
   object-fit: cover;
   border: 1px solid var(--gray-200);
 }
 
-
 @media print {
-  .paper {
-    /* 1. 纸张基础重置 */
-    position: static !important;
-    width: 210mm !important;
-    /* 锁定 A4 宽度 */
-    height: auto !important;
-    min-height: 297mm !important;
-    margin: 0 auto !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-    border: none !important;
-    background-image: none !important;
-
-    /* 2. 强制显示头像颜色 */
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-    background-color: white !important;
+  * {
+    /* 强制使用中文字体 */
+    font-family: "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", "Noto Sans CJK SC", "Heiti SC", sans-serif !important;
   }
 
-  /* 3. 分页逻辑控制 */
+  .paper {
+    position: static !important;
+    width: 210mm !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+
+  /* 1. 板块分页逻辑 */
   .section {
-    /* 告诉浏览器：如果当前页放不下这个板块，请整体移到下一页 */
+    /* 允许板块跨页（因为板块通常很长） */
     break-inside: auto;
     page-break-inside: auto;
-    margin-bottom: 20px;
+
+    /* 打印时保持与屏幕一致的紧凑间距 */
+    margin-bottom: 0px;
     display: block !important;
-    /* 确保它是块级，否则分页失效 */
+  }
+
+  /* 2. 标题防断逻辑 (核心) */
+  .sectionTitle {
+    /* 胶水逻辑：绝对禁止标题后立即换页 */
+    break-after: avoid;
+    page-break-after: avoid;
+    color: #000 !important;
   }
 
   .listItem {
-    break-inside: auto;
-    page-break-inside: auto;
-    margin-bottom: 8px;
+    /* break-inside: avoid;
+    page-break-inside: avoid; */
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #ccc;
   }
 
-  .sectionTitle {
-    break-after: avoid;
-    page-break-after: avoid;
-  }
-
+  /* 4. 布局安全锁 */
   .basicsGrid {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
+  }
+
+  .contactItem svg {
+    color: #000 !important;
   }
 }

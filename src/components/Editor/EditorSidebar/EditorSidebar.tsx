@@ -128,13 +128,6 @@ export const EditorSidebar = ({
                                     <FileJson size={14} />
                                     <span>导出 JSON 配置</span>
                                 </button>
-
-                                {/* 分割线与导入按钮 */}
-                                <div className={styles.menuDivider}></div>
-                                <button className={styles.dropdownItem} onClick={onImportJson}>
-                                    <FileUp size={14} />
-                                    <span>导入 JSON 配置</span>
-                                </button>
                             </div>
                         </div>
                     </div>

@@ -31,8 +31,6 @@ export const ResumePreview = ({ resume }: ResumePreviewProps) => {
         </div>
       </header>
 
-      <hr className={styles.divider} />
-
       {/* 2. 动态板块展示 */}
       {resume.sections.map(section => (
         <section key={section.id} className={styles.section}>
@@ -65,7 +63,7 @@ export const ResumePreview = ({ resume }: ResumePreviewProps) => {
 
                   {/* 描述内容：始终渲染，自动适配 */}
                   <div
-                    className={styles.descriptionPreview}
+                    className={styles.itemDescription}
                     dangerouslySetInnerHTML={{ __html: item.description || '' }}
                   />
                 </li>
