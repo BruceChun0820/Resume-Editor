@@ -64,9 +64,10 @@ export const ResumePreview = ({ resume }: ResumePreviewProps) => {
                   )}
 
                   {/* 描述内容：始终渲染，自动适配 */}
-                  {item.description && (
-                    <p className={styles.itemDescription}>{item.description}</p>
-                  )}
+                  <div
+                    className={styles.descriptionPreview}
+                    dangerouslySetInnerHTML={{ __html: item.description || '' }}
+                  />
                 </li>
               );
             })}

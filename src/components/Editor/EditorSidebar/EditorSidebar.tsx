@@ -144,7 +144,6 @@ export const EditorSidebar = ({
             <BasicsEditor
                 basics={resume.basics}
                 onUpdate={onBasicsUpdate}
-                // 🚀 注入新能力
                 onImageUpload={onUploadAvatar}
                 onImageRemove={onRemoveAvatar}
             />

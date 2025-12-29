@@ -1,6 +1,7 @@
 import { Plus, Trash2 } from 'lucide-react';
 import type { ResumeSection, ListItem } from '../../../types/resume';
 import styles from './SectionEditor.module.css';
+import { RichEditor } from '../../Common/TiptapEditor/RichEditor';
 
 interface SectionEditorProps {
     section: ResumeSection;
@@ -78,7 +79,7 @@ export const SectionEditor = ({ section, onUpdate, onDelete }: SectionEditorProp
 
             {/* 2. 列表内容区域 */}
             <div className={styles.listContainer}>
-                {(section.items||[]).map((item, index) => (
+                {(section.items || []).map((item, index) => (
                     <div key={item.id} className={styles.listItemCard}>
                         {/* Item 头部：序号 + 删除条目按钮 */}
                         <div className={styles.itemHeader}>
@@ -108,12 +109,10 @@ export const SectionEditor = ({ section, onUpdate, onDelete }: SectionEditorProp
 
                         {/* 描述文本框 */}
                         <div className={styles.inputGroup}>
-                            <label className={styles.fieldLabel}>内容描述 / 段落文本</label>
-                            <textarea
-                                className={styles.descriptionArea}
-                                value={item.description || ''}
-                                placeholder="输入工作职责，或者直接在此处输入自我评价..."
-                                onChange={(e) => updateItem(index, 'description', e.target.value)}
+                            <label className={styles.fieldLabel}>项目描述 / 工作职责</label>
+                            <RichEditor
+                                content={item.description || ''}
+                                onChange={(html) => updateItem(index, 'description', html)}
                             />
                         </div>
                     </div>
