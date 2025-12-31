@@ -1,59 +1,247 @@
-/* --- 侧边栏整体布局 --- */
+/* =========================================
+   侧边栏整体容器
+   ========================================= */
 .sidebar {
   width: 40%;
   height: 100vh;
-  overflow-y: auto;
+  overflow-y: auto;          /* 内容超长时允许垂直滚动 */
   padding: 24px;
   border-right: 1px solid var(--border-main);
   background-color: #fff;
-  box-sizing: border-box;
+  box-sizing: border-box;    /* 确保 padding 不会撑大宽度 */
   display: flex;
-  flex-direction: column;
+  flex-direction: column;    /* 内部元素垂直排列 */
 }
 
-/* --- Header 区域 --- */
+/* =========================================
+   Header 头部区域 (包含返回按钮和工具栏)
+   ========================================= */
 .header {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 16px;                 /* 第一行(返回)和第二行(工具栏)的间距 */
   padding-bottom: 20px;
   margin-bottom: 24px;
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--gray-200); /* 底部分割线 */
 }
 
+/* -----------------------------------------
+   第一行：返回按钮区域
+   ----------------------------------------- */
 .titleSection {
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
-.titleWithIcon {
+.backBtn {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;                  /* 图标和文字之间的间距 */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 8px;          /* 增加点击热区 */
+  border-radius: 6px;
+  color: var(--gray-600);
+  transition: all 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: -8px;         /* 视觉补偿：让按钮左边缘与下方内容对齐 */
 }
 
-.mainTitle {
-  font-size: 20px;
-  font-weight: 800;
-  margin: 0;
-  color: var(--gray-950);
-  letter-spacing: -0.5px;
+.backBtn:hover {
+  background-color: var(--gray-100);
+  color: var(--gray-900);
 }
 
-.iconPrimary {
-  color: var(--gray-800);
+.backBtn svg {
+  transition: transform 0.2s;
 }
 
-/* --- 工具栏布局 (第二行) --- */
+.backBtn:hover svg {
+  transform: translateX(-2px); /* 悬停时箭头向左轻微移动的动画 */
+}
+
+/* -----------------------------------------
+   第二行：工具栏 (左侧标题 + 右侧操作按钮)
+   ----------------------------------------- */
 .toolbar {
   display: flex;
   align-items: center;
-  gap: 8px; /* 元素间的标准间距 */
+  justify-content: space-between; /* 关键：让输入框靠左，按钮组靠右 */
+  gap: 12px;
+  width: 100%;
 }
 
-/* 快速导入按钮*/
+/* 简历名称输入框 */
+.resumeTitleInput {
+  flex: 1;                   /* 自动占据左侧剩余所有空间 */
+  min-width: 0;              /* 防止 flex 子项在内容过长时溢出容器 */
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--gray-950);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 2px 0;            /* 默认状态下看起来像纯文本 */
+  transition: all 0.2s;
+  outline: none;
+  letter-spacing: -0.5px;
+  cursor: text;
+}
+
+.resumeTitleInput:hover {
+  background-color: var(--gray-50);
+  padding-left: 6px;         /* 悬停时增加内边距提示可编辑 */
+  margin-left: -6px;         /* 配合 padding 保持文字位置不动 */
+}
+
+.resumeTitleInput:focus {
+  background-color: #fff;
+  border-color: var(--gray-200);
+  padding-left: 6px;
+  margin-left: -6px;
+}
+
+/* 右侧按钮组容器 */
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;            /* 关键：防止浏览器缩小按钮宽度 */
+  margin-left: auto;
+}
+
+/* 统一操作按钮的高度和样式 */
+.actions button {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  white-space: nowrap;       /* 防止按钮文字换行 */
+}
+
+.actions button:hover {
+    transform: translateY(-1px); /* 悬停微上浮效果 */
+    transition: transform 0.1s;
+}
+
+/* =========================================
+   下拉菜单组件 (Dropdown)
+   ========================================= */
+.dropdownWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  width: 175px;
+  background-color: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  opacity: 0;                /* 默认隐藏 */
+  visibility: hidden;        /* 避免隐藏时阻挡鼠标交互 */
+  transform: translateY(-5px);
+  transition: all 0.2s;
+  z-index: 50;               /* 确保菜单浮在其他内容之上 */
+  padding: 4px;
+}
+
+.dropdownWrapper:hover .dropdownMenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);  /* 悬停时显示并下落 */
+}
+
+/* 增加一个不可见的连接区域，防止鼠标从按钮移向菜单时菜单消失 */
+.dropdownWrapper::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 8px;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--gray-700);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdownItem:hover {
+  background-color: var(--gray-50);
+  color: var(--gray-900);
+}
+
+.dropdownItem svg {
+  color: var(--gray-500);
+  width: 14px;
+  height: 14px;
+}
+
+.menuDivider {
+  height: 1px;
+  background-color: var(--gray-100);
+  margin: 4px 0;
+}
+
+/* =========================================
+   简历内容列表区域
+   ========================================= */
+.sectionList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;                 /* 各个板块之间的间距 */
+  margin-bottom: 30px;
+}
+
+.addNewSectionBtn {
+  width: 100%;
+  padding: 16px;
+  background-color: var(--gray-800);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 40px;
+}
+
+.addNewSectionBtn:hover {
+  background-color: black;
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   兼容性样式 (保留以防止旧代码报错)
+   ========================================= */
 .importQuickBtn {
-  /* 覆盖 index.css 默认 padding，统一高度 */
   padding: 5px 12px !important; 
   height: 32px;
   box-sizing: border-box;
@@ -61,10 +249,9 @@
 }
 
 .importQuickBtn svg {
-  stroke-width: 2.5px; /* 让小图标更清晰 */
+  stroke-width: 2.5px;
 }
 
-/* 同步状态区域 */
 .syncStatus {
   display: flex;
   align-items: center;
@@ -84,7 +271,6 @@
   border-color: var(--gray-200);
 }
 
-/* 已连接状态的特殊着色 */
 .synced {
   background-color: #ecfdf5; 
   border-color: #bbf7d0;
@@ -95,20 +281,6 @@
   color: #10b981;
 }
 
-/* --- 右侧按钮组 --- */
-.actions {
-  margin-left: auto;
-  display: flex;
-  gap: 8px;
-}
-
-/* 统一右侧按钮尺寸 */
-.actions button {
-  padding: 5px 12px !important;
-  height: 32px;
-}
-
-/* --- 状态点与小按钮 --- */
 .statusTag {
   font-size: 12px;
   color: var(--gray-600);
@@ -136,12 +308,6 @@
   animation: pulse 2s infinite;
 }
 
-@keyframes pulse {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-}
-
 .disconnectBtn {
   background: transparent;
   border: none;
@@ -158,108 +324,8 @@
   color: #ef4444;
 }
 
-/* --- Dropdown 下拉菜单 --- */
-.dropdownWrapper {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdownMenu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 8px;
-  width: 175px;
-  background-color: #fff;
-  border: 1px solid var(--gray-200);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 100;
-  padding: 4px;
-}
-
-.dropdownWrapper:hover .dropdownMenu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.dropdownWrapper::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  height: 8px;
-}
-
-.dropdownItem {
-  display: grid;
-  grid-template-columns: 20px 1fr;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 10px 12px;
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  color: var(--gray-700);
-  font-size: 13px;
-  font-weight: 500;
-  text-align: left;
-  cursor: pointer;
-}
-
-.dropdownItem:hover {
-  background-color: var(--gray-100);
-  color: var(--gray-950);
-}
-
-.dropdownItem svg {
-  color: var(--gray-500);
-  justify-self: center;
-  width: 14px;
-  height: 14px;
-}
-
-.menuDivider {
-  height: 1px;
-  background-color: var(--gray-100);
-  margin: 4px 0;
-}
-
-/* --- 列表区域 --- */
-.sectionList {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  margin-bottom: 30px;
-}
-
-/* --- 底部：添加新板块按钮 --- */
-.addNewSectionBtn {
-  width: 100%;
-  padding: 16px;
-  background-color: var(--gray-800);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 40px;
-}
-
-.addNewSectionBtn:hover {
-  background-color: black;
-  transform: translateY(-2px);
+@keyframes pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }

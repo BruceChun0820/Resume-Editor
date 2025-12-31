@@ -3,7 +3,7 @@ import type { Resume } from "@/types/resume";
 import { isValidResume } from "@/utils/validator";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { getDirectoryHandle, storeDirectoryHandle, verifyPermission } from "@/utils/fileSystem";
 export interface ResumeItem {
     id: string;
     name: string;
@@ -13,6 +13,9 @@ export interface ResumeItem {
 export const useDashboard = () => {
     const navigate = useNavigate();
 
+    // 保存当前的文件夹句柄
+    const [syncHandle, setSyncHandle] = useState<FileSystemDirectoryHandle | null>(null);
+
     // 1. 初始化数据
     const [resumes, setResumes] = useState<ResumeItem[]>(() => {
         const savedList = localStorage.getItem("resume-list");
@@ -20,10 +23,21 @@ export const useDashboard = () => {
         return [];
     });
 
-    // 2. 自动同步到 LocalStorage
+    // 自动同步到 LocalStorage
     useEffect(() => {
         localStorage.setItem("resume-list", JSON.stringify(resumes));
     }, [resumes]);
+
+    // 初始化时检查本地文件夹连接状态
+    useEffect(() => {
+        const checkSyncStatus = async () => {
+            const handle = await getDirectoryHandle();
+            if (handle) {
+                setSyncHandle(handle);
+            }
+        };
+        checkSyncStatus();
+    }, []);
 
     // --- 核心动作 ---
 
@@ -42,9 +56,10 @@ export const useDashboard = () => {
 
     // B. 删除简历
     const deleteResume = (id: string) => {
-        // 二次确认可以在 UI 层做，也可以在这里简单的 window.confirm，或者配合 UI 组件
-        setResumes((prev) => prev.filter(r => r.id !== id));
-        // 这里也可以顺便清除该简历的详情数据: localStorage.removeItem(`resume-${id}`)
+        if (window.confirm("确定要删除这份简历吗？此操作无法撤销。")) {
+            setResumes((prev) => prev.filter(r => r.id !== id));
+            localStorage.removeItem(`resume-${id}`);
+        }
     };
 
     // C. 创建副本
@@ -56,11 +71,20 @@ export const useDashboard = () => {
             name: `${original.name} (副本)`,
             updatedAt: new Date().toISOString().split('T')[0],
         };
-        // 这里的副本目前只是列表副本，如果需要连带内容一起复制，需要读取 localStorage(`resume-${original.id}`) 并存入新的 Key
-        // 暂时先只做列表层面的演示
+
+    // 尝试复制详情内容
+        const originalContent = localStorage.getItem(`resume-${original.id}`);
+        if (originalContent) {
+            const parsedContent = JSON.parse(originalContent);
+            parsedContent.id = newId;
+            parsedContent.name = copy.name;
+            localStorage.setItem(`resume-${newId}`, JSON.stringify(parsedContent));
+        }
+
         setResumes((prev) => [copy, ...prev]);
     };
 
+    // 导入简历Json
     const importResume = () => {
         const input = document.createElement('input');
         input.type = 'file';
@@ -80,48 +104,37 @@ export const useDashboard = () => {
                     return;
                 }
 
-                // 2. 识别或分配 ID
-                // 优先使用 JSON 内自带的 ID，如果没有，才生成新的
-                let targetId = jsonData.id;
-                let isOverwrite = false;
+                // 2. 确定 ID
+                // 如果 JSON 里自带 ID，就用自带的；否则生成新的
+                const targetId = jsonData.id || Date.now().toString();
 
-                if (targetId) {
-                    // 检查本地列表是否已经有这个 ID
-                    const isExist = resumes.some(r => r.id === targetId);
-                    if (isExist) {
-                        if (!window.confirm(`检测到本地已存在 ID 为 [${targetId}] 的简历，是否覆盖现有内容？`)) {
-                            return; // 用户取消覆盖
-                        }
-                        isOverwrite = true;
-                    }
-                } else {
-                    // 没 ID 的旧文件或纯数据，生成一个新 ID
-                    targetId = Date.now().toString();
-                }
-
+                // 3. 准备完整的简历数据对象
                 const currentDate = new Date().toISOString().split('T')[0];
-
-                // 3. 构造完整的简历对象
                 const finalResume: Resume = {
                     ...jsonData,
-                    id: targetId,
+                    id: targetId, // 确保 ID 一致
                     updatedAt: currentDate,
-                    name: jsonData.name || jsonData.basics.name || "未命名简历"
+                    name: jsonData.name || jsonData.basics?.name || "导入的简历"
                 };
 
-                // 4. 保存详情到 LocalStorage
+                // 4. 存入/覆盖 LocalStorage 详情数据
+                // 逻辑：既然用户主动导入了，就代表他想编辑这份文件的内容，所以直接覆盖
                 localStorage.setItem(`resume-${targetId}`, JSON.stringify(finalResume));
 
-                // 5. 更新 Dashboard 列表
-                if (isOverwrite) {
-                    // 如果是覆盖，更新列表中对应项的时间和名字
+                // 5. 更新 Dashboard 列表状态
+                const exists = resumes.some(r => r.id === targetId);
+
+                if (exists) {
+                    console.log('简历已存在，更新元数据');
+                    // A. 如果已存在：只更新列表里的元数据（比如名字可能变了），不新增卡片
                     setResumes(prev => prev.map(r =>
                         r.id === targetId
                             ? { ...r, name: finalResume.name, updatedAt: currentDate }
                             : r
                     ));
                 } else {
-                    // 如果是新 ID，插入到列表首位
+                    console.log('简历不存在，新增卡片');
+                    // B. 如果不存在：新增一个卡片
                     const newItem: ResumeItem = {
                         id: targetId,
                         name: finalResume.name,
@@ -130,15 +143,35 @@ export const useDashboard = () => {
                     setResumes(prev => [newItem, ...prev]);
                 }
 
-                alert(isOverwrite ? "简历已更新！" : "简历导入成功！");
+                // 6. 直接跳转到编辑器
+                navigate(`/editor/${targetId}`);
 
             } catch (err) {
                 console.error(err);
-                alert('文件读取或解析失败');
+                alert('解析 JSON 失败，请检查文件是否损坏。');
             }
         };
 
         input.click();
+    };
+
+    // 关联文件夹
+    const connectFolder = async () => {
+        try {
+            const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
+            const hasPerm = await verifyPermission(handle, true);
+            
+            if (hasPerm) {
+                await storeDirectoryHandle(handle);
+                setSyncHandle(handle); // 更新状态，UI 会变成绿色
+                // alert 不再需要，UI 变化就是最好的反馈
+            }
+        } catch (error: any) {
+            if (error.name !== 'AbortError') {
+                console.error('关联文件夹失败:', error);
+                alert('关联失败，请重试');
+            }
+        }
     };
 
     return {
@@ -147,5 +180,7 @@ export const useDashboard = () => {
         deleteResume,
         duplicateResume,
         importResume,
+        connectFolder,
+        syncHandle,
     };
 };

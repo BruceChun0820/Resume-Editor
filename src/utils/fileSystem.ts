@@ -1,11 +1,11 @@
-
+// src/utils/fileSystem.ts
 import { get, set } from 'idb-keyval';
 
 const DIR_HANDLE_KEY = 'resume_sync_dir_handle';
-const FILE_NAME = 'resume.json';
+const FILENAME_MAP_PREFIX = 'resume_sync_filename_'; // 映射表前缀
 
-// 把handle存储到 IndexedDB
-// IndexedDB 是浏览器内置的一个轻量级数据库，适合存储结构化数据，存储在本地磁盘但只能通过浏览器访问
+// --- 基础 Handle 管理 ---
+
 export const storeDirectoryHandle = async (handle: FileSystemDirectoryHandle) => {
     try {
         await set(DIR_HANDLE_KEY, handle);
@@ -14,63 +14,86 @@ export const storeDirectoryHandle = async (handle: FileSystemDirectoryHandle) =>
     }
 };
 
-// 2. 从 IndexedDB 获取句柄
 export const getDirectoryHandle = async () => {
     return await get<FileSystemDirectoryHandle>(DIR_HANDLE_KEY);
 };
 
-// readWrite 参数表示是否需要读写权限，默认为 false（只读）
 export const verifyPermission = async (handle: FileSystemHandle, readWrite: boolean = false) => {
     const options = { mode: readWrite ? 'readwrite' : 'read' } as const;
-
-    // 检查是否已经有权限
-    if ((await handle.queryPermission(options)) === 'granted') {
-        return true;
-    }
-
-    // 如果没有权限则请求权限
-    if ((await handle.requestPermission(options)) === 'granted') {
-        return true;
-    }
-
-    // 最终没有权限
+    if ((await handle.queryPermission(options)) === 'granted') return true;
+    if ((await handle.requestPermission(options)) === 'granted') return true;
     return false;
-}
+};
+
+// 辅助函数：生成安全的文件名
+const getSafeFileName = (resumeName: string) => {
+    const safeName = (resumeName || '未命名简历').replace(/[\\/:*?"<>|]/g, '_');
+    return `${safeName}.json`;
+};
+
+// --- 核心逻辑：基于记录的删除/创建方案 ---
 
 export const saveResumeToLocal = async (dirHandle: FileSystemDirectoryHandle, resumeData: any) => {
     try {
-        // 根据Handle找到resume.json文件或者创建resume.json文件
-        const fileHandle = await dirHandle.getFileHandle(FILE_NAME, { create: true });
+        // 1. 数据兜底
+        if (!resumeData.id) resumeData.id = Date.now().toString();
+        if (!resumeData.name) resumeData.name = "未命名简历";
 
-        // 创建写入流
+        const resumeId = resumeData.id;
+        const newFileName = getSafeFileName(resumeData.name);
+        
+        // 2. 查账：获取上次保存的文件名
+        const mapKey = `${FILENAME_MAP_PREFIX}${resumeId}`;
+        const lastFileName = localStorage.getItem(mapKey);
+
+        // 3. 比较与清理：如果改名了，删除旧文件
+        if (lastFileName && lastFileName !== newFileName) {
+            try {
+                // 直接尝试删除旧文件
+                await dirHandle.removeEntry(lastFileName);
+                console.log(`[AutoSave] 重命名检测: 已删除旧文件 ${lastFileName}`);
+            } catch (err: any) {
+                // 如果文件本身就不存在（比如用户手动在文件夹里删了），忽略错误
+                if (err.name !== 'NotFoundError') {
+                    console.warn('[AutoSave] 删除旧文件失败:', err);
+                }
+            }
+        }
+
+        // 4. 创建新文件 (create: true 保证了如果不存在则新建，存在则覆盖)
+        const fileHandle = await dirHandle.getFileHandle(newFileName, { create: true });
+
+        // 5. 写入内容
         const writable = await fileHandle.createWritable();
-
-        // 写入数据
-        // stringify 1.对象 2.过滤器 3.缩进空格数
         await writable.write(JSON.stringify(resumeData, null, 2));
-
-        // 关闭写入流
         await writable.close();
-        console.log('简历已保存到本地文件');
+
+        // 6. 更新账本：记住这次的文件名
+        localStorage.setItem(mapKey, newFileName);
+
+        console.log(`[AutoSave] 同步成功: ${newFileName}`);
+
     } catch (error) {
         console.error('保存简历到本地失败:', error);
     }
-}
+};
 
-// 从本地文件加载简历数据
-export const loadResumeFromLocal = async (dirHandle: FileSystemDirectoryHandle): Promise<any> => {
+// 读取逻辑：读取时也要更新账本，防止异地操作导致映射丢失
+export const loadResumeFromLocal = async (fileHandle: FileSystemFileHandle): Promise<any> => {
     try {
-        // 获取resume.json文件
-        const fileHandle = await dirHandle.getFileHandle(FILE_NAME);
-
-        // 获取文件对象
         const file = await fileHandle.getFile();
         const text = await file.text();
-
-        // 将JSON字符串解析为对象并返回
-        return JSON.parse(text);
+        const data = JSON.parse(text);
+        
+        // 关键：如果是从文件读取的，顺便更新一下本地记录
+        if (data.id && data.name) {
+            // 这里我们信任当前读取的文件名是正确的
+            localStorage.setItem(`${FILENAME_MAP_PREFIX}${data.id}`, fileHandle.name);
+        }
+        
+        return data;
     } catch (error) {
-        console.error('从本地文件加载简历失败:', error);
+        console.error('加载本地文件失败:', error);
         return null;
     }
 };

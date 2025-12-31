@@ -21,9 +21,15 @@ export const ResumePreview = ({ resume }: ResumePreviewProps) => {
         <div className={styles.headerContent}>
           <h1 className={styles.name}>{resume.basics.name}</h1>
           <div className={styles.basicsGrid}>
-            <span className={styles.contactItem}><Briefcase size={14} />{resume.basics.title}</span>
-            <span className={styles.contactItem}><Mail size={14} />{resume.basics.email}</span>
-            <span className={styles.contactItem}><Phone size={14} />{resume.basics.phone}</span>
+            {resume.basics.title && (
+              <span className={styles.contactItem}><Briefcase size={14} />{resume.basics.title}</span>
+            )}
+            {resume.basics.email && (
+              <span className={styles.contactItem}><Mail size={14} />{resume.basics.email}</span>
+            )}
+            {resume.basics.phone && (
+              <span className={styles.contactItem}><Phone size={14} />{resume.basics.phone}</span>
+            )}
             {resume.basics.location && (
               <span className={styles.contactItem}><MapPin size={14} />{resume.basics.location}</span>
             )}

@@ -6,20 +6,16 @@ import {
     ChevronDown,
     FileText,
     FileJson,
-    HardDrive,
-    Link2Off,
-    FileUp // 1. 新增导入图标
+    ArrowLeft // 🔥 1. 引入返回图标
 } from 'lucide-react';
-import type { Resume, ResumeSection } from "../../../types/resume";
+import type { Resume, ResumeSection } from "@/types/resume"; 
 import { SectionEditor } from "../SectionEditor/SectionEditor";
 import { BasicsEditor } from "../BasicsEditor/BasicsEditor";
 import styles from "./EditorSidebar.module.css";
-// 2. 注意：这里不再需要引入 verifyPermission, storeDirectoryHandle 等底层工具了
 
 interface EditorSidebarProps {
     // --- 数据状态 ---
     resume: Resume;
-    syncHandle: FileSystemDirectoryHandle | null;
 
     // --- 基础编辑动作 ---
     onBasicsUpdate: (updatedBasics: Resume['basics']) => void;
@@ -27,12 +23,10 @@ interface EditorSidebarProps {
     onAddSection: () => void;
     onDeleteSection: (sectionId: string) => void;
     onResumeReset: () => void;
+    onRename: (newName: string) => void;
+    onBack: () => void; 
 
-    // --- 功能性动作 (直接映射 Hook 里的 Actions) ---
-    // 这里不再关注实现细节，只关注“动作”本身
-    onConnectSync: () => void;
-    onDisconnectSync: () => void;
-    onImportJson: () => void;
+    // --- 功能性动作 ---
     onExportJson: () => void;
     onPrint: () => void;
     onUploadAvatar: (file: File) => void;
@@ -41,15 +35,13 @@ interface EditorSidebarProps {
 
 export const EditorSidebar = ({
     resume,
-    syncHandle,
     onSectionUpdate,
     onBasicsUpdate,
     onResumeReset,
     onAddSection,
     onDeleteSection,
-    onConnectSync,
-    onDisconnectSync,
-    onImportJson,
+    onRename,
+    onBack,
     onExportJson,
     onPrint,
     onUploadAvatar,
@@ -61,50 +53,28 @@ export const EditorSidebar = ({
             {/* 头部区域 */}
             <header className={styles.header}>
                 <div className={styles.titleSection}>
-                    <div className={styles.titleWithIcon}>
-                        <LayoutGrid size={24} className={styles.iconPrimary} />
-                        <h1 className={styles.mainTitle}>简历编辑器</h1>
-                    </div>
+                    {/* 🔥 3. 修改：将原来的纯图标改为可点击的返回按钮 */}
+                    <button 
+                        onClick={onBack} 
+                        className={styles.backBtn}
+                        title="返回仪表盘"
+                    >
+                        <ArrowLeft size={18} />
+                        <span>返回仪表盘</span>
+                    </button>
+                    
+                    
                 </div>
 
                 <div className={styles.toolbar}>
-                    <button
-                        className={`btn-secondary ${styles.importQuickBtn}`}
-                        onClick={onImportJson}
-                    >
-                        <FileUp size={14} />
-                        <span>导入JSON配置</span>
-                    </button>
-
-                    {/* 本地同步状态/开关 */}
-                    <div
-                        className={`${styles.syncStatus} ${syncHandle ? styles.synced : ''}`}
-                        // 逻辑简化：直接绑定 Prop
-                        onClick={syncHandle ? undefined : onConnectSync}
-                        title={syncHandle ? "已开启本地文件夹同步" : "点击关联本地文件夹"}
-                    >
-                        {syncHandle ? (
-                            <>
-                                <HardDrive size={14} className={styles.syncIcon} />
-                                <span className={styles.statusTag}>已同步至本地</span>
-                                <button
-                                    className={styles.disconnectBtn}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onDisconnectSync(); // 直接调用断开
-                                    }}
-                                >
-                                    <Link2Off size={12} />
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <span className={styles.statusDotGray}></span>
-                                <span className={styles.statusTag}>未开启同步</span>
-                            </>
-                        )}
-                    </div>
-
+                    {/* 标题输入框 */}
+                    <input 
+                        type="text"
+                        className={styles.resumeTitleInput}
+                        value={resume.name || ""} 
+                        onChange={(e) => onRename(e.target.value)}
+                        placeholder="未命名简历"
+                    />
                     <div className={styles.actions}>
                         <button className="btn-secondary" onClick={onResumeReset}>
                             <RotateCcw size={14} />
@@ -114,11 +84,10 @@ export const EditorSidebar = ({
                         <div className={styles.dropdownWrapper}>
                             <button className={`btn-primary ${styles.dropdownTrigger}`}>
                                 <Download size={14} />
-                                <span>导出简历</span>
+                                <span>导出</span>
                                 <ChevronDown size={12} style={{ marginLeft: 4, opacity: 0.8 }} />
                             </button>
 
-                            {/* 下拉菜单 */}
                             <div className={styles.dropdownMenu}>
                                 <button className={styles.dropdownItem} onClick={onPrint}>
                                     <FileText size={14} />

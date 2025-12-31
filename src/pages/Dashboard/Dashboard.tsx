@@ -1,8 +1,10 @@
-// src/pages/Dashboard.tsx
 import { useNavigate } from "react-router-dom";
 import {
     Plus, FileText, Settings, Trash2, MoreVertical,
-    Download, Copy, Pencil, Search, Upload
+    Download, Copy, Pencil, Search, Upload,
+    FolderSync,
+    HardDrive,
+    RefreshCw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,18 +14,28 @@ import { Input } from "@/components/ui/input";
 import {
     DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
+// 修正引入路径：假设文件位于 src/hooks/useDashboard.ts
 import { useDashboard } from "@/hooks/useDashboard/useDashboard";
 import Styles from "./Dashboard.module.css";
 
 export default function Dashboard() {
     const navigate = useNavigate();
-    const { resumes, createResume, deleteResume, duplicateResume, importResume } = useDashboard();
+    const {
+        resumes,
+        syncHandle, 
+        createResume,
+        deleteResume,
+        duplicateResume,
+        importResume,
+        connectFolder
+    } = useDashboard();
 
     return (
-        // 2. 应用容器样式
         <div className={Styles.dashboardContainer}>
 
+            {/* --- 左侧边栏 --- */}
             <aside className={Styles.sidebar}>
                 <div className="p-6">
                     <h2 className="text-xl font-bold tracking-tight flex items-center gap-2 text-slate-900">
@@ -73,10 +85,39 @@ export default function Dashboard() {
                 <header className={Styles.header}>
                     <h1 className="text-lg font-semibold text-slate-800">我的简历库</h1>
                     <div className="flex items-center gap-4">
-                        <div className="relative w-64">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
+                        <div className={Styles.searchWrapper}>
+                            <Search className={Styles.searchIcon} />
                             <Input placeholder="搜索简历..." className="pl-9 bg-slate-50 border-slate-200" />
                         </div>
+
+                        {/* 同步按钮：根据 syncHandle 状态切换样式和内容 */}
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={connectFolder}
+                            className={cn(
+                                Styles.syncButton,
+                                syncHandle ? Styles.syncButtonActive : ""
+                            )}
+                            title={syncHandle ? `当前同步位置: ${syncHandle.name}\n点击修改存储位置` : "关联本地文件夹以开启自动同步"}
+                        >
+                            {syncHandle ? (
+                                <>
+                                    {/* 已连接状态 (绿色) */}
+                                    <HardDrive size={14} className="shrink-0" />
+                                    <span className="text-xs">已同步:</span>
+                                    <span className={Styles.folderName}>{syncHandle.name}</span>
+                                    <RefreshCw size={12} className="opacity-50 ml-1" />
+                                </>
+                            ) : (
+                                <>
+                                    {/* 未连接状态 (灰色) */}
+                                    <FolderSync size={16} />
+                                    关联文件夹
+                                </>
+                            )}
+                        </Button>
+
                         <Button variant="outline" size="sm" onClick={importResume} className="gap-1 border-slate-300 text-slate-600 hover:text-slate-900">
                             <Upload size={16} /> 导入 JSON
                         </Button>
@@ -89,7 +130,6 @@ export default function Dashboard() {
                 {/* 内容滚动区 */}
                 <ScrollArea className="flex-1 p-8">
                     <div className="max-w-6xl mx-auto">
-                        {/* 3. 网格布局样式 */}
                         <div className={Styles.gridContainer}>
 
                             {/* [1] 新建简历卡片 */}
@@ -111,7 +151,6 @@ export default function Dashboard() {
                                     onClick={() => navigate(`/editor/${resume.id}`)}
                                     className="group hover:shadow-lg transition-all duration-300 border-slate-200 flex flex-col cursor-pointer"
                                 >
-                                    {/* 4. 卡片预览区样式 */}
                                     <div className={Styles.cardPreview}>
                                         <div className="absolute inset-0 flex items-center justify-center text-slate-300">
                                             <FileText size={48} opacity={0.2} />
