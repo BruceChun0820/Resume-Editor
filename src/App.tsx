@@ -1,47 +1,20 @@
-import './App.css'
-import { EditorSidebar } from './components/Editor/EditorSidebar/EditorSidebar'
-import { ResumePreview } from './components/Preview/ResumePreview'
-import { useResume } from './hooks/useResume'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Dashboard from "@/pages/Dashboard/Dashboard";
+import Editor from "@/pages/Editor/Editor";
 
 function App() {
-  // 从自定义 Hook 中获取所有数据和封装好的动作
-  const {
-    resume,
-    syncHandle,
-    actions
-  } = useResume();
-
   return (
-    <div className="app-container">
-      {/* 左侧编辑器 */}
-      <EditorSidebar
-        // 数据状态
-        resume={resume}
-        syncHandle={syncHandle}
-
-        // 基础编辑动作 (来自 useResumeState)
-        onBasicsUpdate={actions.updateBasics}
-        onSectionUpdate={actions.updateSection}
-        onAddSection={actions.addSection}
-        onDeleteSection={actions.deleteSection}
-        onResumeReset={actions.resetResume}
-
-        // 交互与同步动作 (来自 useResumeActions)
-        onUploadAvatar={actions.uploadAvatar}
-        onRemoveAvatar={actions.removeAvatar}
-        onConnectSync={actions.connectSync}
-        onDisconnectSync={actions.disconnectSync}
-        onImportJson={actions.triggerImport}
-        onExportJson={actions.exportJson}
-        onPrint={actions.printResume}
-      />
-
-      {/* 右侧预览区 */}
-      <div className="preview-container">
-        <ResumePreview resume={resume} />
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        {/* 1. 访问根路径 / 时，显示“我的简历库”门户 */}
+        <Route path="/" element={<Dashboard />} />
+        
+        {/* 访问 /editor/xxx 时，显示编辑器 */}
+        {/* :id 是动态参数，稍后我们在 Editor 里通过 useParams 获取 */}
+        <Route path="/editor/:id" element={<Editor />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
-export default App
+export default App;

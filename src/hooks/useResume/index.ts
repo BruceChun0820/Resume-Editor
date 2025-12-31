@@ -3,9 +3,9 @@ import { useResumeState } from './useResumeState';
 import { useResumeSync } from './useResumeSync';
 import { useResumeActions } from './useResumeActions'; // 引入新 Hook
 
-export const useResume = () => {
+export const useResume = (resumeId: string) => {
     // 1. 数据层 (Model)
-    const { resume, setResume, actions: stateActions } = useResumeState();
+    const { resume, setResume, actions: stateActions } = useResumeState(resumeId);
 
     // 2. 持久化层 (Persistence)
     // 它需要 resume 数据来做自动保存，需要 setResume 来做初始化加载

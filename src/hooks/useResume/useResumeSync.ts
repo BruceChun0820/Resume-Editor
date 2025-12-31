@@ -16,7 +16,7 @@ export const useResumeSync = (
             if (savedHandle && await verifyPermission(savedHandle, true)) {
                 setSyncHandle(savedHandle);
                 const localData = await loadResumeFromLocal(savedHandle);
-                if (localData) setResume(localData); // 这里的 setResume 来自参数
+                if (localData) setResume(localData);
             }
         };
         initData();

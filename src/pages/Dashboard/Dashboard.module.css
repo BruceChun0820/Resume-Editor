@@ -1,0 +1,105 @@
+/* src/pages/Dashboard.module.css */
+
+.dashboardContainer {
+  display: flex;
+  height: 100vh;
+  background-color: rgb(248 250 252 / 0.5); /* slate-50/50 */
+}
+
+/* 侧边栏 */
+.sidebar {
+  width: 16rem; /* w-64 */
+  border-right: 1px solid #e2e8f0;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 移动端隐藏逻辑（可选，如果需要响应式则保留） */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+}
+
+/* 主内容区 */
+.mainContent {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部 Header */
+.header {
+  height: 4rem; /* h-16 */
+  border-bottom: 1px solid #e2e8f0;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem; /* px-8 */
+}
+
+/* 简历网格布局 */
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.5rem; /* gap-6 */
+  padding-bottom: 5rem; /* pb-20 */
+}
+
+@media (min-width: 768px) {
+  .gridContainer {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .gridContainer {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* 卡片内的预览图区域 */
+.cardPreview {
+  height: 8rem; /* h-32 */
+  background-color: #f1f5f9; /* slate-100 */
+  position: relative;
+  border-bottom: 1px solid #f1f5f9;
+  overflow: hidden;
+}
+
+/* src/pages/Dashboard.module.css */
+
+/* 侧边栏整体容器保持之前的宽度和背景 */
+.sidebar {
+  width: 16rem;
+  border-right: 1px solid #e2e8f0;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* 导航容器：确保子元素从左开始排 */
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 关键：子元素靠左 */
+  gap: 0.5rem;
+  padding: 0 1rem;
+  width: 100%;
+}
+
+/* 按钮样式：覆盖 Shadcn 默认居中 */
+.navButton {
+  width: 100% !important;
+  justify-content: flex-start !important; /* 文字和图标靠左 */
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  height: 2.5rem; /* 统一高度 */
+}

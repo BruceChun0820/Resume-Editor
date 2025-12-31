@@ -2,11 +2,15 @@ import { useState } from 'react';
 import type { Resume, ResumeSection } from '../../types/resume';
 import { initialResume } from '../../data/initialResume';
 
-export const useResumeState = () => {
-    // 初始化时先只读 LocalStorage，因为这是同步操作，不涉及异步文件
+export const useResumeState = (resumeId: string) => {
     const [resume, setResume] = useState<Resume>(() => {
-        const saved = localStorage.getItem('resume-data');
-        return saved ? JSON.parse(saved) : initialResume;
+        const saved = localStorage.getItem(`resume-${resumeId}`);
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            return { ...parsed, id: resumeId };
+        }
+        //如果是新建，把传入的 ID 赋给初始对象
+        return { ...initialResume, id: resumeId, updatedAt: new Date().toISOString() };
     });
     
     const updateBasics = (updatedBasics: Resume['basics']) => {

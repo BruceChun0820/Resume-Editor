@@ -26,7 +26,7 @@
   display: flex;
   align-items: center;
   gap: 24px;
-  margin-bottom: 0;
+  margin-bottom: 15px;
 }
 
 .name {

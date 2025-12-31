@@ -1,0 +1,17 @@
+
+.appContainer {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.previewContainer {
+  flex: 1;
+  background-color: #525659; /* 深灰色背景 */
+  overflow-y: auto;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}

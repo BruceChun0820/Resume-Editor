@@ -7,6 +7,10 @@
     "module": "ESNext",
     "types": ["vite/client","node", "@types/wicg-file-system-access"],
     "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
 
     /* Bundler mode */
     "moduleResolution": "bundler",

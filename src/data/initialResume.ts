@@ -1,6 +1,9 @@
 import type { Resume } from "../types/resume";
 
 export const initialResume: Resume = {
+    id: 'default-id', 
+    name: '未命名简历',
+    updatedAt: new Date().toISOString().split('T')[0],
     basics: {
         name: "",
         title: "",
