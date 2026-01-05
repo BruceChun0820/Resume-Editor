@@ -2,8 +2,10 @@ import { EditorSidebar } from '@/components/Editor/EditorSidebar/EditorSidebar'
 import { ResumePreview } from '@/components/Preview/ResumePreview'
 import { useResume } from '@/hooks/useResume/useResume'
 import { useNavigate, useParams } from 'react-router-dom' // 引入 hook以此获取路由里的 id
+import { useReactToPrint } from 'react-to-print';
 import Styles from './Editor.module.css'
 import '@/App.css'
+import { useRef } from 'react'
 
 export default function Editor() {
   // 获取路由参数，比如 /editor/123 里的 "123"
@@ -17,6 +19,25 @@ export default function Editor() {
     resume,
     actions
   } = useResume(resumeId);
+
+  const componentRef = useRef<HTMLDivElement>(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef: componentRef,
+    documentTitle: `Resume-${resume.name || 'Untitled'}`,
+    onAfterPrint: () => console.log('打印完成'),
+    pageStyle: `
+      @page {
+        size: A4;
+        margin: 0mm;
+      }
+      @media print {
+        body {
+          -webkit-print-color-adjust: exact;
+        }
+      }
+    `,
+  });
 
   return (
     <div className={Styles.appContainer}>
@@ -40,12 +61,14 @@ export default function Editor() {
 
         // 保留导出和打印
         onExportJson={actions.exportJson}
-        onPrint={actions.printResume}
+        onPrint={handlePrint}
       />
 
       {/* 右侧预览区 */}
       <div className={Styles.previewContainer}>
-        <ResumePreview resume={resume} />
+        <div ref={componentRef}>
+          <ResumePreview resume={resume} />
+        </div>
       </div>
     </div>
   );

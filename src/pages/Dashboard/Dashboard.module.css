@@ -135,14 +135,109 @@
   }
 }
 
-/* 卡片预览区 */
-.cardPreview {
-  height: 8rem;
-  background-color: #f1f5f9;
+/* --- 6. 新版卡片样式 (Slate 风格) --- */
+
+/* 卡片容器 */
+.resumeCard {
   position: relative;
-  border-bottom: 1px solid #f1f5f9;
+  background-color: white;
+  border: 1px solid #e2e8f0; /* slate-200 */
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 250px; /* 固定高度，整齐划一 */
   overflow: hidden;
 }
+
+.resumeCard:hover {
+  border-color: #cbd5e1; /* slate-300 */
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  transform: translateY(-2px);
+}
+
+/* 卡片主体内容 (居中) */
+.cardMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* 图标圆形背景 */
+.iconCircle {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background-color: #f1f5f9; /* slate-100 */
+  color: #475569; /* slate-600 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  transition: background-color 0.2s;
+}
+
+.resumeCard:hover .iconCircle {
+  background-color: #e2e8f0; /* slate-200 */
+  color: #0f172a; /* slate-900 */
+}
+
+/* 标题样式 */
+.cardTitle {
+  font-weight: 600;
+  color: #0f172a; /* slate-900 */
+  margin-bottom: 0.25rem;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 日期样式 */
+.cardDate {
+  font-size: 0.75rem;
+  color: #94a3b8; /* slate-400 */
+  font-family: monospace;
+}
+
+/* 底部操作栏 */
+.cardActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 两个按钮平分 */
+  border-top: 1px solid #f1f5f9; /* slate-100 */
+}
+
+/* 按钮基础样式调整 */
+.actionBtn {
+  border-radius: 0 !important; /* 去掉圆角，使其贴合底部 */
+  height: 2.75rem !important;
+  font-size: 0.875rem !important;
+  border: none !important;
+  background-color: transparent !important;
+  color: #475569 !important; /* slate-600 */
+}
+
+.actionBtn:hover {
+  background-color: #f8fafc !important; /* slate-50 */
+  color: #0f172a !important; /* slate-900 */
+}
+
+/* 删除按钮特殊样式 */
+.deleteBtn {
+  color: #ef4444 !important; /* red-500 */
+}
+.deleteBtn:hover {
+  background-color: #fef2f2 !important; /* red-50 */
+  color: #b91c1c !important; /* red-700 */
+}
+
+/* --- 7. 响应式适配 --- */
 
 /* 移动端隐藏侧边栏 */
 @media (max-width: 768px) {

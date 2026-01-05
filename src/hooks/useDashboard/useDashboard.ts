@@ -4,6 +4,7 @@ import { isValidResume } from "@/utils/validator";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getDirectoryHandle, storeDirectoryHandle, verifyPermission } from "@/utils/fileSystem";
+import { initialResume } from "@/data/initialResume";
 export interface ResumeItem {
     id: string;
     name: string;
@@ -43,15 +44,47 @@ export const useDashboard = () => {
 
     // A. 创建并跳转
     const createResume = () => {
+        // 1. 算法：计算唯一名称
+        const baseName = "未命名简历";
+        let uniqueName = baseName;
+        let counter = 1;
+
+        // 创建一个 Set 方便快速查找现有名字
+        const existingNames = new Set(resumes.map(r => r.name));
+
+        // 循环检查：如果 "未命名简历" 存在，就试 "(1)"，还存在就试 "(2)"...
+        while (existingNames.has(uniqueName)) {
+            uniqueName = `${baseName} (${counter})`;
+            counter++;
+        }
+
+        // 2. 生成 ID 和 时间
         const newId = Date.now().toString();
-        const newResume: ResumeItem = {
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        // 3. 准备完整的详情数据
+        // 我们需要把这个名字写入到简历的详情里，这样进入编辑器后，标题也是对的
+        const newResumeDetail: Resume = {...initialResume,
             id: newId,
-            name: "未命名简历",
-            updatedAt: new Date().toISOString().split('T')[0],
+            name: uniqueName, // 🔥 使用计算出的唯一名字
+            updatedAt: currentDate,
         };
 
-        setResumes((prev) => [newResume, ...prev]);
-        navigate(`/editor/${newId}`); // 逻辑层处理跳转
+        // 4. 🔥 关键：像 Import 一样，直接初始化 LocalStorage
+        // 这样 useResumeState 初始化时会直接读取到这个名字，而不是默认的"未命名"
+        localStorage.setItem(`resume-${newId}`, JSON.stringify(newResumeDetail));
+
+        // 5. 更新 Dashboard 列表
+        const newItem: ResumeItem = {
+            id: newId,
+            name: uniqueName,
+            updatedAt: currentDate,
+        };
+
+        setResumes((prev) => [newItem, ...prev]);
+        
+        // 6. 跳转
+        navigate(`/editor/${newId}`);
     };
 
     // B. 删除简历

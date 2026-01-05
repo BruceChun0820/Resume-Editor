@@ -1,23 +1,35 @@
 .paper {
+  /* A4 物理宽度 */
   width: 210mm;
+  /* 允许高度自由生长，但最小是一页 */
   min-height: 297mm;
+  
+  /* 内边距：内容与纸张边缘的距离 */
   padding: 15mm;
   margin: 0 auto;
   background-color: #fff;
   position: relative;
   box-sizing: border-box;
 
-  /* 显式指定字体 */
+  /* 字体设置 */
   font-family: "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", "Noto Sans CJK SC", "Heiti SC", sans-serif;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 
-  background-image: linear-gradient(to bottom,
-      transparent 296mm,
-      #e5e7eb 296mm,
-      #e5e7eb 297mm,
-      transparent 297mm);
+  /* --- 🔥 核心修改：单条精准分割线 🔥 --- */
+  
+  /* 1. 设定循环周期：正好是一张 A4 纸的高度 */
   background-size: 100% 297mm;
+  
+  /* 2. 绘制一条 1px 的蓝色分割线，位于每一页的最底部 */
+  /* 逻辑：0 ~ (297mm - 1px) 是透明的，最后 1px 是蓝色 */
+  background-image: linear-gradient(to bottom, 
+      transparent calc(297mm - 1px), 
+      var(--gray-400) calc(297mm - 1px), 
+      var(--gray-400) 297mm
+  );
+  
+  /* 确保 Flex 布局方向正确 */
   display: flex;
   flex-direction: column;
 }
@@ -158,55 +170,39 @@
 }
 
 @media print {
-  * {
-    /* 强制使用中文字体 */
-    font-family: "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", "Noto Sans CJK SC", "Heiti SC", sans-serif !important;
+  /* 全局重置 */
+  :global(body) {
+    margin: 0;
+    padding: 0;
   }
 
   .paper {
-    position: static !important;
-    width: 210mm !important;
-    height: auto !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background-image: none !important;
+    /* 核心：移除定位和阴影 */
+    position: relative !important;
     box-shadow: none !important;
+    margin: 0 !important;
+    
+    /* 打印时必须移除背景图，否则蓝线会被印出来！ */
+    background-image: none !important;
+    
+    /* 锁定尺寸 */
+    width: 210mm !important;
+    min-height: 297mm !important;
+    padding: 0mm !important; /* 保持内边距一致 */
+    height: auto !important;
+    
+    /* 强制显示背景色 */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background-color: white !important;
+    
+    display: block !important; 
+    overflow: visible !important;
   }
-
-  /* 1. 板块分页逻辑 */
-  .section {
-    /* 允许板块跨页（因为板块通常很长） */
-    break-inside: auto;
-    page-break-inside: auto;
-
-    /* 打印时保持与屏幕一致的紧凑间距 */
-    margin-bottom: 0px;
-    display: block !important;
-  }
-
-  /* 2. 标题防断逻辑 (核心) */
-  .sectionTitle {
-    /* 胶水逻辑：绝对禁止标题后立即换页 */
-    break-after: avoid;
-    page-break-after: avoid;
-    color: #000 !important;
-  }
-
-  .listItem {
-    /* break-inside: avoid;
-    page-break-inside: avoid; */
-    margin-bottom: 6px;
-    padding-bottom: 6px;
-    border-bottom: 1px dashed #ccc;
-  }
-
-  /* 4. 布局安全锁 */
-  .basicsGrid {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-  }
-
-  .contactItem svg {
-    color: #000 !important;
+  
+  /* 隐藏装饰元素 */
+  .paper::before, 
+  .paper::after {
+    display: none !important;
   }
 }
