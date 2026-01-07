@@ -1,0 +1,62 @@
+.header {
+  height: 4rem;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  /* 【关键修改 1】两端对齐：标题在左，操作区自动被推到最右 */
+  justify-content: space-between; 
+  padding: 0 2rem;
+  flex-shrink: 0;
+}
+
+/* 操作区容器 */
+.actionsContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* 搜索框和按钮之间的间距 */
+}
+
+/* 搜索框外层容器 */
+.searchWrapper {
+  position: relative;
+  /* 宽度交由 Input 组件控制 */
+  display: flex; 
+  align-items: center;
+}
+
+/* 图标定位 */
+.searchIcon {
+  position: absolute;
+  left: 0.75rem; /* 距离左边缘 12px */
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1rem;
+  width: 1rem;
+  color: #94a3b8;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* 按钮内文字截断 */
+.folderName {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.syncButton { 
+  display: flex;
+  align-items: center;
+  gap: 6px; 
+  border-color: #e2e8f0; 
+  color: #475569; 
+}
+
+.syncButtonActive {
+  background-color: #ecfdf5 !important;
+  border-color: #6ee7b7 !important;
+  color: #059669 !important;
+}
