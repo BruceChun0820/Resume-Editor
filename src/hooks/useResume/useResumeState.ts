@@ -59,7 +59,7 @@ export const useResumeState = (resumeId: string) => {
     };
 
     const resetResume = () => {
-        if (window.confirm('确定重置吗？')) setResume(initialResume);
+        if (window.confirm('重置后将无法还原已填写的内容，确定重置吗？')) setResume(initialResume);
     };
 
     const renameResume = (name: string) => {

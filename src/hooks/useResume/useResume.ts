@@ -4,7 +4,7 @@ import { useResumeActions } from './useResumeActions';
 
 export const useResume = (resumeId: string) => {
     // 1. 数据层 (Model)
-    const { resume, setResume, actions: stateActions } = useResumeState(resumeId);
+    const { resume, actions: stateActions } = useResumeState(resumeId);
 
     // 2. 本地文件同步层 (File System)
     const { syncHandle } = useResumeSync(resume);
@@ -15,7 +15,6 @@ export const useResume = (resumeId: string) => {
         stateActions.updateImage
     );
 
-    // 4. 统一对外暴露 (ViewModel)
     return {
         // 数据状态
         resume,

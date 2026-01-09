@@ -1,14 +1,14 @@
 import { FileText, MoreVertical, Copy, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { 
-    DropdownMenu, 
-    DropdownMenuContent, 
-    DropdownMenuItem, 
-    DropdownMenuSeparator, 
-    DropdownMenuTrigger 
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import Styles from "./ResumeCard.module.css"; 
+import Styles from "./ResumeCard.module.css";
 import type { ResumeItem } from "@/hooks/useDashboard/useDashboard";
 
 interface ResumeCardProps {

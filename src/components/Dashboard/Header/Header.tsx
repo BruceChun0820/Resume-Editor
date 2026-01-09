@@ -1,4 +1,4 @@
-import { Search, Upload, Plus, FolderSync, HardDrive, RefreshCw } from "lucide-react";
+import { Search, Upload, FolderSync, HardDrive, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -49,7 +49,7 @@ export function Header({ syncHandle, connectFolder, importResume, createResume }
                     )}
                 </Button>
 
-                <Button variant="outline" onClick={importResume} className="gap-2 border-slate-200 text-slate-600 hover:text-slate-900">
+                <Button variant="outline" onClick={importResume} className={cn("btn-secondary", "gap-2 border-slate-200 text-slate-600 hover:text-slate-900")}>
                     <Upload size={16} /> 导入 JSON
                 </Button>
             </div>

@@ -1,6 +1,7 @@
 import { Briefcase, Mail, Phone, MapPin } from 'lucide-react';
 import type { Resume } from '../../types/resume';
 import styles from './ResumePreview.module.css';
+import { cn } from '@/lib/utils';
 
 interface ResumePreviewProps {
   resume: Resume;
@@ -69,7 +70,7 @@ export const ResumePreview = ({ resume }: ResumePreviewProps) => {
 
                   {/* 描述内容：始终渲染，自动适配 */}
                   <div
-                    className={styles.itemDescription}
+                    className={cn(styles.itemDescription, "rich-text-content")}
                     dangerouslySetInnerHTML={{ __html: item.description || '' }}
                   />
                 </li>

@@ -1,35 +1,21 @@
+
 .paper {
-  /* A4 物理宽度 */
   width: 210mm;
-  /* 允许高度自由生长，但最小是一页 */
   min-height: 297mm;
-  
-  /* 内边距：内容与纸张边缘的距离 */
   padding: 15mm;
   margin: 0 auto;
   background-color: #fff;
   position: relative;
   box-sizing: border-box;
-
-  /* 字体设置 */
   font-family: "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", "Noto Sans CJK SC", "Heiti SC", sans-serif;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
-
-  /* --- 🔥 核心修改：单条精准分割线 🔥 --- */
-  
-  /* 1. 设定循环周期：正好是一张 A4 纸的高度 */
   background-size: 100% 297mm;
-  
-  /* 2. 绘制一条 1px 的蓝色分割线，位于每一页的最底部 */
-  /* 逻辑：0 ~ (297mm - 1px) 是透明的，最后 1px 是蓝色 */
   background-image: linear-gradient(to bottom, 
       transparent calc(297mm - 1px), 
       var(--gray-400) calc(297mm - 1px), 
       var(--gray-400) 297mm
   );
-  
-  /* 确保 Flex 布局方向正确 */
   display: flex;
   flex-direction: column;
 }
@@ -67,13 +53,6 @@
 
 .contactItem svg {
   color: var(--gray-800);
-  print-color-adjust: exact;
-}
-
-.divider {
-  border: none;
-  border-top: 2px solid var(--gray-800);
-  margin: 12px 0;
 }
 
 .section {
@@ -92,6 +71,7 @@
   break-after: avoid;
 }
 
+/* 这里的 list 是简历板块的大列表容器，不应该影响内部富文本 */
 .list {
   list-style: none !important;
   padding: 0;
@@ -107,8 +87,6 @@
 
 .listItem:last-child {
   border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
 }
 
 .itemHeaderLine {
@@ -137,31 +115,41 @@
   font-weight: 500;
 }
 
-/* 描述文本 (兼顾 List 描述 和 Paragraph 段落) */
+/* =========================================
+   描述文本（修复分点显示的核心区域）
+   ========================================= */
 .itemDescription {
-  margin: 12px 0;
+  margin: 8px 0;
   font-size: 14px;
   color: var(--gray-800);
   line-height: 1.6;
-  white-space: pre-wrap;
   text-align: justify;
+  /* 移除 white-space: pre-wrap 以免干扰 HTML 列表渲染 */
 }
 
-/* 控制两个 bullet 之间的距离 */
+/* 强制找回被 Tailwind 或父级清除的列表样式 */
+.itemDescription :global(ul) {
+  list-style-type: disc !important;
+  padding-left: 1.25rem !important;
+  margin: 6px 0 !important;
+}
+
+.itemDescription :global(ol) {
+  list-style-type: decimal !important;
+  padding-left: 1.25rem !important;
+  margin: 6px 0 !important;
+}
+
 .itemDescription :global(li) {
-  /* 如果觉得还是远，可以设置负边距，例如 -2px，但通常 0px 就很紧凑了 */
-  margin-bottom: 4px !important; 
-  /* 确保列表内的文字也遵循 1.6 行高 */
+  display: list-item !important; /* 确保以列表项形式显示 */
+  margin-bottom: 2px !important;
   line-height: 1.6 !important;
 }
 
-/* 段落间距：设为 0，防止 bullet 内部换行产生大空隙 */
 .itemDescription :global(p) {
   margin: 0 !important;
-  padding: 0.1px !important;
 }
 
-/* 预览区头像样式 */
 .avatar {
   width: 120px;
   height: 160px;
@@ -170,39 +158,21 @@
 }
 
 @media print {
-  /* 全局重置 */
   :global(body) {
     margin: 0;
     padding: 0;
   }
-
   .paper {
-    /* 核心：移除定位和阴影 */
     position: relative !important;
     box-shadow: none !important;
     margin: 0 !important;
-    
-    /* 打印时必须移除背景图，否则蓝线会被印出来！ */
     background-image: none !important;
-    
-    /* 锁定尺寸 */
     width: 210mm !important;
     min-height: 297mm !important;
-    padding: 0mm !important; /* 保持内边距一致 */
+    padding: 0mm !important; /* 保持与预览一致的打印边距 */
     height: auto !important;
-    
-    /* 强制显示背景色 */
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
     background-color: white !important;
-    
     display: block !important; 
     overflow: visible !important;
-  }
-  
-  /* 隐藏装饰元素 */
-  .paper::before, 
-  .paper::after {
-    display: none !important;
   }
 }

@@ -1,18 +1,18 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
 /* =========================================
-   1. CSS 变量与主题定义
-   (这是整个 App 的配色基础，必须保留)
+   1. 基础配置与 CSS 变量
    ========================================= */
+@custom-variant dark (&:is(.dark *));
+
 :root {
-  /* --- 字体设置 (保留了 Vite 的优化设置) --- */
+  /* --- 字体与基础设置 --- */
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  /* --- 基础色阶 (Grayscale Palette) --- */
+  /* --- 你的核心灰色系 (Grayscale Palette) --- */
   --gray-50: #f9fafb;
   --gray-100: #f3f4f6;
   --gray-200: #e5e7eb;
@@ -24,7 +24,7 @@
   --gray-800: #1f2937;
   --gray-950: #030712;
 
-  /* --- 语义化变量 --- */
+  /* --- 语义化变量 (App Theme) --- */
   --bg-app: var(--gray-100);
   --bg-card: #ffffff;
   --border-main: var(--gray-200);
@@ -32,310 +32,194 @@
   --text-muted: var(--gray-500);
   --border-radius: 6px;
 
-  /* 强制浅色模式 (Light Mode) 
-     简历编辑器通常使用浅色背景，以匹配白纸预览 */
-  color-scheme: light;
-  color: var(--text-main);
-  background-color: var(--bg-app);
-
-  /* 字体渲染优化 */
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
-}
-
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-}
-
-body {
-  display: block; 
-}
-
-#root {
-  height: 100%;
-  isolation: isolate;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  /* --- Shadcn UI 必需变量 (映射到你的灰色系，保证一致性) --- */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 220 13% 18%;      /* 对应 gray-800 */
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.5rem;
 }
 
 /* =========================================
-    全局组件：输入框 (Inputs)
+   2. Base Layer (基础重置)
    ========================================= */
-input, textarea {
-  display: block;
-  width: 100%;
-  padding: 10px 12px;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-main);
-  border-radius: var(--border-radius);
-  font-size: 14px;
-  color: var(--text-main);
-  transition: border-color 0.2s, box-shadow 0.2s;
-  font-family: inherit; /* 继承全局字体 */
-}
-
-input:hover, textarea:hover {
-  border-color: var(--gray-400);
-}
-
-input:focus, textarea:focus {
-  outline: none;
-  border-color: var(--gray-600);
-  background-color: #fff;
-  box-shadow: 0 0 0 3px rgba(55, 65, 81, 0.1);
-}
-
-textarea {
-  resize: vertical;
-  min-height: 80px;
-  line-height: 1.5;
-}
-
-::placeholder {
-  color: var(--gray-300);
+@layer base {
+  * {
+    /* 使用 CSS 变量直接控制边框，避免 @apply border-border 报错 */
+    border-color: var(--border-main); 
+  }
+  body {
+    background-color: var(--bg-app);
+    color: var(--text-main);
+  }
 }
 
 /* =========================================
-    全局组件：按钮 (Buttons)
+   3. Components Layer (自定义组件样式)
    ========================================= */
-/* 这里的样式会覆盖 Vite 默认的黑色按钮 */
-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  cursor: pointer;
-  border-radius: var(--border-radius);
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em; /* 保留 Vite 的内边距设定，手感不错 */
-  font-size: 14px;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: transparent; /* 默认背景透明，交给具体类名控制 */
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  outline: none;
-}
-
-/* 样式变体：危险操作 (红色) */
-.btn-danger {
-  color: #ef4444; 
-  background-color: #fff;
-  border-color: #fee2e2; 
-}
-
-.btn-danger:hover {
-  background-color: #fef2f2;
-  border-color: #fca5a5;
-  color: #dc2626;
-}
-
-/* 样式变体：主要操作 黑底白字 */
-.btn-primary {
-  color: #fff;
-  background-color: var(--gray-800);
-  border-color: var(--gray-800);
-}
-
-.btn-primary:hover {
-  background-color: #000;
-  border-color: #000;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* 样式变体：次要操作 (白底灰边) */
-.btn-secondary {
-  color: var(--gray-600);
-  background-color: #fff;
-  border-color: var(--border-main);
-}
-
-.btn-secondary:hover {
-  border-color: var(--gray-400);
-  color: var(--gray-800);
-  background-color: var(--gray-50);
-}
-
-/* 移除 Vite 默认的 focus-visible 亮色轮廓，改用我们自己的 focus 样式 */
-button:focus,
-button:focus-visible {
-  outline: none; 
-}
-
-/* src/index.css */
-
-/* ... 前面的基础样式保持不变 ... */
-
-@media print {
-  /* 1. 隐藏编辑器侧边栏和所有交互 UI */
-  aside,
-  .sidebar,
-  button,
-  .dropdownWrapper,
-  ::-webkit-scrollbar {
-    display: none !important;
+@layer components {
+  .btn-base, 
+  .btn-primary, 
+  .btn-secondary, 
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-sm font-medium transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50;
+    padding: 0.6em 1.2em;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    border: 1px solid transparent;
   }
 
-  /* 2. 解除 App 容器的 Flex 限制和溢出隐藏 */
+  /* Primary: 黑底白字 */
+  .btn-primary {
+    color: #fff;
+    background-color: var(--gray-800);
+    border-color: var(--gray-800);
+  }
+  .btn-primary:hover {
+    background-color: #000;
+    border-color: #000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  /* Secondary: 白底灰边 */
+  .btn-secondary {
+    color: var(--gray-600);
+    background-color: #fff;
+    border-color: var(--border-main);
+  }
+  .btn-secondary:hover {
+    border-color: var(--gray-400);
+    color: var(--gray-800);
+    background-color: var(--gray-50);
+  }
+
+  /* Danger: 红字白底 */
+  .btn-danger {
+    color: #ef4444; 
+    background-color: #fff;
+    border-color: #fee2e2; 
+  }
+  .btn-danger:hover {
+    background-color: #fef2f2;
+    border-color: #fca5a5;
+    color: #dc2626;
+  }
+
+  .rich-text-content {
+    /* 1. 恢复无序列表圆点 */
+    & ul {
+      list-style-type: disc !important;
+      padding-left: 1.5rem !important; /* 增加缩进 */
+      margin: 0.5rem 0 !important;
+    }
+
+    /* 2. 恢复有序列表数字 */
+    & ol {
+      list-style-type: decimal !important;
+      padding-left: 1.5rem !important;
+      margin: 0.5rem 0 !important;
+    }
+
+    /* 3. 恢复列表项样式 */
+    & li {
+      display: list-item !important; /* 强制作为列表项渲染 */
+      margin-bottom: 0.25rem !important;
+      padding-left: 0.25rem !important;
+    }
+
+    /* 4. 恢复斜体和加粗 */
+    & em, & i {
+      font-style: italic !important;
+    }
+    & strong, & b {
+      font-weight: 700 !important;
+    }
+    
+    /* 5. 段落间距微调 */
+    & p {
+      margin-bottom: 0.4rem;
+      line-height: 1.6;
+    }
+  }
+}
+/* =========================================
+   4. 打印样式
+   ========================================= */
+@media print {
+  aside, .sidebar, button, .dropdownWrapper, ::-webkit-scrollbar {
+    display: none !important;
+  }
   .app-container {
-    display: block !important;   /* 禁用 flex */
+    display: block !important;
     height: auto !important;
     overflow: visible !important;
   }
-
-  /* 3. 关键：解除预览容器的滚动限制 */
   .preview-container {
     display: block !important;
     position: static !important;
     width: 100% !important;
-    height: auto !important;     /* 必须让高度随内容伸展 */
-    overflow: visible !important; /* 必须让溢出可见 */
+    height: auto !important;
+    overflow: visible !important;
     padding: 0 !important;
     margin: 0 !important;
     background: none !important;
   }
-
-  /* 4. 基础页面重置 */
   html, body, #root {
     height: auto !important;
     overflow: visible !important;
     background-color: white !important;
     margin: 0 !important;
   }
-
   @page {
     size: A4;
-    margin: 15mm; /* 标准 A4 打印边距 */
+    margin: 15mm;
   }
 }
 
-@theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+/* --- 输入框 --- */
+.input-base {
+  @apply flex w-full border bg-white text-sm transition-all;
+  /* 🔥 新增：强制禁用 Shadcn 默认的聚焦光环 */
+  @apply focus-visible:ring-0 focus-visible:ring-offset-0;
+  
+  padding: 10px 12px;
+  border-color: var(--border-main);
+  border-radius: var(--border-radius);
+  color: var(--text-main);
+  
+  /* 解决 Shadcn 可能带来的高度锁定问题，保持你习惯的内边距 */
+  height: auto; 
 }
 
-.dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+.input-base:hover {
+  border-color: var(--gray-400); /* 恢复悬停变深灰 */
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+.input-base:focus-visible {
+  outline: none;
+  border-color: var(--gray-600); /* 聚焦边框变深 */
+  /* 恢复你喜欢的轻微阴影，而不是 Shadcn 的大黑圈 */
+  box-shadow: 0 0 0 3px rgba(55, 65, 81, 0.1); 
+  background-color: #fff;
 }
+
+.input-base::placeholder {
+  color: var(--gray-300);
+}
+
+

@@ -1,40 +1,35 @@
-import styles from "./BasicsEditor.module.css";
-import type { Resume } from "../../../types/resume";
 import { Upload, X } from "lucide-react";
+import { Input } from "@/components/ui/input"; // 引入 Shadcn Input
+import { cn } from "@/lib/utils";
+import styles from "./BasicsEditor.module.css";
+import type { Resume } from "@/types/resume";
 
 interface BasicsEditorProps {
     basics: Resume['basics'];
-    // 文本更新：保持原样，直接回传完整的 basics 对象
-    onUpdate: (updatedBasics: Resume['basics']) => void; 
-    // 图片上传：只负责传出 File 对象，不处理转换
+    onUpdate: (updatedBasics: Resume['basics']) => void;
     onImageUpload: (file: File) => void;
-    // 图片删除：只负责触发信号
     onImageRemove: () => void;
 }
 
-export const BasicsEditor = ({ 
-    basics, 
-    onUpdate, 
-    onImageUpload, 
-    onImageRemove 
+export const BasicsEditor = ({
+    basics,
+    onUpdate,
+    onImageUpload,
+    onImageRemove
 }: BasicsEditorProps) => {
 
-    // 处理输入框变化
     const handleChange = (field: keyof Resume['basics'], value: string) => {
         onUpdate({ ...basics, [field]: value });
     };
 
-    // 处理文件选择事件
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            onImageUpload(file); // 直接把“炸弹”扔给父组件，自己不拆
+            onImageUpload(file);
         }
-        // 建议清空 input value，否则选同一张图不会触发 onChange
-        e.target.value = ''; 
+        e.target.value = '';
     };
 
-    // 配置项：使得 JSX 更简洁
     const config: { key: keyof Resume['basics']; label: string; fullWidth?: boolean }[] = [
         { key: 'name', label: '姓名' },
         { key: 'title', label: '求职意向' },
@@ -48,22 +43,23 @@ export const BasicsEditor = ({
             <h3 className={styles.title}>个人信息</h3>
 
             <div className={styles.editorBody}>
-                {/* 左侧：头像区域 */}
+                {/* 左侧：头像区域 (保持原生结构以维持特殊样式) */}
                 <div className={styles.avatarSection}>
                     {basics.image ? (
                         <div className={styles.previewContainer}>
                             <img src={basics.image} alt="Avatar" className={styles.avatarPreview} />
-                            <button 
-                                className={styles.removeBtn} 
-                                onClick={onImageRemove} // 直接调用 Props
+                            <button
+                                className={styles.removeBtn}
+                                onClick={onImageRemove}
                                 title="删除照片"
+                                type="button" // 显式声明 type 防止触发表单提交
                             >
                                 <X size={14} />
                             </button>
                         </div>
                     ) : (
                         <label className={styles.uploadBtn}>
-                            <Upload size={16} />
+                            <Upload size={18} />
                             <span>上传照片</span>
                             <input
                                 type="file"
@@ -80,13 +76,16 @@ export const BasicsEditor = ({
                     {config.map((item) => (
                         <div
                             key={item.key}
-                            className={`${styles.inputGroup} ${item.fullWidth ? styles.fullWidth : ''}`}
+                            className={cn(styles.inputGroup, item.fullWidth && styles.fullWidth)}
                         >
                             <label className={styles.fieldLabel}>{item.label}</label>
-                            <input
+
+                            {/* 迁移到 Shadcn Input */}
+                            <Input
                                 value={basics[item.key] || ''}
                                 onChange={(e) => handleChange(item.key, e.target.value)}
                                 placeholder={`请输入${item.label}`}
+                                className="input-base bg-white"
                             />
                         </div>
                     ))}

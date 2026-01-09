@@ -57,29 +57,36 @@
     margin: 0 8px;
 }
 
-.editorContent :global(.tiptap) {
+.editorContent :global(.ProseMirror) {
     min-height: 100px;
     padding: 12px;
-    /* 使用我们项目定义的深灰色文字 */
-    color: var(--gray-800); 
+    color: var(--gray-800);
     font-size: 14px;
     line-height: 1.6;
     outline: none;
-    background-color: transparent;
 }
 
-/* 列表缩进对齐 (这些逻辑保持不变) */
-.editorContent :global(.tiptap ul), 
-.editorContent :global(.tiptap ol) {
-    padding-left: 1.5rem;
-    margin: 0.5rem 0;
+/* 1. 恢复无序列表 (圆点) */
+.editorContent :global(.ProseMirror ul) {
+    list-style-type: disc !important;
+    padding-left: 1.5em;
+    margin: 0.5em 0;
 }
 
-.editorContent :global(.tiptap li) {
-    margin-bottom: 0.2rem;
+/* 2. 恢复有序列表 (数字) */
+.editorContent :global(.ProseMirror ol) {
+    list-style-type: decimal !important;
+    padding-left: 1.5em;
+    margin: 0.5em 0;
 }
 
-/* 段落间距 */
-.editorContent :global(.tiptap p) {
-    margin: 0;
+/* 3. 确保斜体和粗体不被 reset 覆盖 */
+.editorContent :global(.ProseMirror em),
+.editorContent :global(.ProseMirror i) {
+    font-style: italic !important;
+}
+
+.editorContent :global(.ProseMirror strong),
+.editorContent :global(.ProseMirror b) {
+    font-weight: bold !important;
 }

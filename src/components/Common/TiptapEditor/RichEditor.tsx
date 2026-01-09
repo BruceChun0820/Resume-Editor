@@ -1,5 +1,6 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import UnderlineExtension from '@tiptap/extension-underline';
 import { Bold, Italic, List, ListOrdered, Underline, AlignCenter, AlignJustify, AlignLeft, AlignRight } from 'lucide-react';
 import styles from './RichEditor.module.css';
 import TextAlign from '@tiptap/extension-text-align';
@@ -14,6 +15,7 @@ export const RichEditor = ({ content, onChange }: RichEditorProps) => {
     const editor = useEditor({
         extensions: [
             StarterKit,
+            UnderlineExtension,
             TextAlign.configure({
                 types: ['heading', 'paragraph'], // 允许对标题和段落进行对齐
                 alignments: ['left', 'center', 'right', 'justify'], // 启用的对齐方式
@@ -21,6 +23,12 @@ export const RichEditor = ({ content, onChange }: RichEditorProps) => {
             }),
         ],
         content: content,
+        editorProps: {
+            // 🔥 3. 关键：给编辑器内部的 CSS 添加一个类名，方便我们在 CSS 中针对性样式修复
+            attributes: {
+                class: 'prose-content focus:outline-none', 
+            },
+        },
         onUpdate: ({ editor }) => {
             // 当内容变化时，将 HTML 传回给父组件
             onChange(editor.getHTML());

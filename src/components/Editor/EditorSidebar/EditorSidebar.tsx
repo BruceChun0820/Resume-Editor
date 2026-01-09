@@ -5,18 +5,26 @@ import {
     ChevronDown,
     FileText,
     FileJson,
-    ArrowLeft // 🔥 1. 引入返回图标
+    ArrowLeft
 } from 'lucide-react';
+import { Button } from "@/components/ui/button"; 
+import { Input } from "@/components/ui/input";   
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn } from '@/lib/utils';
+import { useState } from 'react';
+
 import type { Resume, ResumeSection } from "@/types/resume"; 
 import { SectionEditor } from "../SectionEditor/SectionEditor";
 import { BasicsEditor } from "../BasicsEditor/BasicsEditor";
 import styles from "./EditorSidebar.module.css";
 
 interface EditorSidebarProps {
-    // --- 数据状态 ---
     resume: Resume;
-
-    // --- 基础编辑动作 ---
     onBasicsUpdate: (updatedBasics: Resume['basics']) => void;
     onSectionUpdate: (updatedSection: ResumeSection) => void;
     onAddSection: () => void;
@@ -24,8 +32,6 @@ interface EditorSidebarProps {
     onResumeReset: () => void;
     onRename: (newName: string) => void;
     onBack: () => void; 
-
-    // --- 功能性动作 ---
     onExportJson: () => void;
     onPrint: () => void;
     onUploadAvatar: (file: File) => void;
@@ -46,58 +52,65 @@ export const EditorSidebar = ({
     onUploadAvatar,
     onRemoveAvatar
 }: EditorSidebarProps) => {
+    const [open, setOpen] = useState(false);
 
     return (
         <aside className={styles.sidebar}>
-            {/* 头部区域 */}
             <header className={styles.header}>
                 <div className={styles.titleSection}>
-                    {/* 🔥 3. 修改：将原来的纯图标改为可点击的返回按钮 */}
-                    <button 
+                    {/* 1. 返回按钮：样式已移入 .backButton */}
+                    <Button 
                         onClick={onBack} 
-                        className={styles.backBtn}
+                        className={styles.backButton} // 引用 module.css
                         title="返回仪表盘"
                     >
-                        <ArrowLeft size={18} />
-                        <span>返回仪表盘</span>
-                    </button>
-                    
-                    
+                        {/* 图标样式移入 .backIcon */}
+                        <ArrowLeft size={18} className={styles.backIcon} />
+                        <span className="ml-2">返回仪表盘</span>
+                    </Button>
                 </div>
 
                 <div className={styles.toolbar}>
-                    {/* 标题输入框 */}
-                    <input 
-                        type="text"
-                        className={styles.resumeTitleInput}
+                    {/* 2. 标题输入框：复刻原版 hover/focus 效果 */}
+                    <Input 
                         value={resume.name || ""} 
                         onChange={(e) => onRename(e.target.value)}
                         placeholder="未命名简历"
+                        className={styles.resumeTitleInput} 
                     />
+
                     <div className={styles.actions}>
-                        <button className="btn-secondary" onClick={onResumeReset}>
+                        {/* 3. 重置按钮：引用全局 index.css 的 btn-secondary */}
+                        <Button 
+                            onClick={onResumeReset} 
+                            className="btn-secondary" 
+                        >
                             <RotateCcw size={14} />
                             <span>重置</span>
-                        </button>
+                        </Button>
 
-                        <div className={styles.dropdownWrapper}>
-                            <button className={`btn-primary ${styles.dropdownTrigger}`}>
-                                <Download size={14} />
-                                <span>导出</span>
-                                <ChevronDown size={12} style={{ marginLeft: 4, opacity: 0.8 }} />
-                            </button>
-
-                            <div className={styles.dropdownMenu}>
-                                <button className={styles.dropdownItem} onClick={onPrint}>
-                                    <FileText size={14} />
-                                    <span>导出 PDF</span>
-                                </button>
-                                <button className={styles.dropdownItem} onClick={onExportJson}>
-                                    <FileJson size={14} />
-                                    <span>导出 JSON 配置</span>
-                                </button>
+                        {/* 4. 导出按钮：引用全局 btn-primary */}
+                        <DropdownMenu open={open} onOpenChange={setOpen}>
+                            <div onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+                                <DropdownMenuTrigger asChild>
+                                    <Button className="btn-primary gap-1">
+                                        <Download size={14} />
+                                        <span>导出</span>
+                                        <ChevronDown size={12} className={styles.exportIcon} />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-40">
+                                    <DropdownMenuItem onClick={onPrint} className="cursor-pointer gap-2">
+                                        <FileText size={14} />
+                                        <span>导出 PDF</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={onExportJson} className="cursor-pointer gap-2">
+                                        <FileJson size={14} />
+                                        <span>导出 JSON 配置</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
                             </div>
-                        </div>
+                        </DropdownMenu>
                     </div>
                 </div>
             </header>
@@ -120,10 +133,14 @@ export const EditorSidebar = ({
                 ))}
             </div>
 
-            <button className={styles.addNewSectionBtn} onClick={onAddSection}>
+            {/* 5. 添加板块按钮：样式移入 .addSectionButton，同时保留 btn-primary 基础色 */}
+            <Button 
+                onClick={onAddSection} 
+                className={cn("btn-primary", styles.addSectionButton)}
+            >
                 <FolderPlus size={18} />
                 添加自定义板块
-            </button>
+            </Button>
         </aside>
     );
 }

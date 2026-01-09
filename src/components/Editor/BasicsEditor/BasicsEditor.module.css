@@ -1,120 +1,136 @@
+
+/* =========================================
+   卡片容器
+   ========================================= */
 .container {
-    background: var(--bg-card);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 24px;
-    border: 1px solid var(--border-main);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  background: #fff; /* 或 var(--bg-card) */
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border-main);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+/* 标题样式 (左侧带竖线) */
 .title {
-    margin: 0 0 20px 0;
-    font-size: 16px;
-    color: var(--gray-800);
-    border-left: 4px solid var(--gray-800);
-    padding-left: 10px;
-    line-height: 1;
+  margin: 0 0 24px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gray-900);
+  border-left: 4px solid var(--gray-900);
+  padding-left: 12px;
+  line-height: 1;
 }
 
-/* 核心：包装容器，控制头像和右侧网格的排布 */
+/* =========================================
+   主体布局 (Flex: 左头像 + 右表单)
+   ========================================= */
 .editorBody {
-    display: flex;
-    gap: 24px;
-    align-items: flex-start; /* 顶部对齐 */
+  display: flex;
+  gap: 32px; /* 增加一点间距，让布局更舒展 */
+  align-items: flex-start;
 }
 
-/* --- 头像区域 (左侧) --- */
+/* -----------------------------------------
+   左侧：头像区域
+   ----------------------------------------- */
 .avatarSection {
-    flex-shrink: 0; /* 禁止头像被挤压 */
+  flex-shrink: 0;
 }
 
+/* 上传按钮 (虚线圆圈) */
 .uploadBtn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100px;
-    height: 100px;
-    border: 2px dashed var(--gray-300);
-    border-radius: 50%;
-    color: var(--gray-500);
-    cursor: pointer;
-    background-color: var(--gray-50);
-    gap: 8px;
-    font-size: 11px;
-    transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border: 2px dashed var(--gray-300);
+  border-radius: 50%;
+  color: var(--gray-500);
+  cursor: pointer;
+  background-color: var(--gray-50);
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .uploadBtn:hover {
-    border-color: var(--gray-500);
-    color: var(--gray-800);
-    background-color: var(--gray-100);
+  border-color: var(--gray-500);
+  color: var(--gray-800);
+  background-color: var(--gray-100);
 }
 
 .hiddenInput {
-    display: none;
+  display: none;
 }
 
+/* 头像预览容器 */
 .previewContainer {
-    position: relative;
-    width: 100px;
-    height: 100px;
+  position: relative;
+  width: 100px;
+  height: 100px;
 }
 
 .avatarPreview {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--gray-100);
-    background-color: var(--gray-50);
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gray-100);
+  background-color: var(--gray-50);
 }
 
+/* 删除按钮 (右上角红叉) */
 .removeBtn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: #ff4d4f;
-    color: white;
-    border: 2px solid white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ef4444; /* red-500 */
+  color: white;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+  z-index: 10;
 }
 
 .removeBtn:hover {
-    transform: scale(1.1);
-    background: #ff7875;
+  transform: scale(1.1);
+  background: #dc2626; /* red-600 */
 }
 
-/* --- 输入框区域 (右侧) --- */
+/* -----------------------------------------
+   右侧：表单网格
+   ----------------------------------------- */
 .grid {
-    flex: 1; /* 自动占据右侧剩余空间 */
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 标准两列布局 */
-    gap: 16px;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 16px; /* 行间距20px，列间距16px */
 }
 
 .inputGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .fieldLabel {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gray-500);
-    letter-spacing: 0.5px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-600);
 }
 
 .fullWidth {
-    grid-column: span 2; /* 邮箱等需要撑满全行的字段 */
+  grid-column: span 2;
 }
