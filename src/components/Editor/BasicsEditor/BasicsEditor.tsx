@@ -1,58 +1,56 @@
-import { Upload, X } from "lucide-react";
-import { Input } from "@/components/ui/input"; // 引入 Shadcn Input
-import { cn } from "@/lib/utils";
+// src/components/Editor/BasicsEditor/BasicsEditor.tsx
+import { Upload, X, Plus, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import styles from "./BasicsEditor.module.css";
-import type { Resume } from "@/types/resume";
+import type { BasicInfoData, BasicInfoItem } from "@/types/resume";
+import { useBasicsEditor } from "./useBasicsEditor";
 
 interface BasicsEditorProps {
-    basics: Resume['basics'];
-    onUpdate: (updatedBasics: Resume['basics']) => void;
-    onImageUpload: (file: File) => void;
-    onImageRemove: () => void;
+    data: BasicInfoData;
+    items: BasicInfoItem[];
+    onDataChange: (data: Partial<BasicInfoData>) => void;
+    onItemsChange: (items: BasicInfoItem[]) => void;
 }
 
 export const BasicsEditor = ({
-    basics,
-    onUpdate,
-    onImageUpload,
-    onImageRemove
+    data,
+    items,
+    onDataChange,
+    onItemsChange
 }: BasicsEditorProps) => {
 
-    const handleChange = (field: keyof Resume['basics'], value: string) => {
-        onUpdate({ ...basics, [field]: value });
-    };
+    const {
+        handleDataChange,
+        handleImageUpload,
+        handleImageRemove,
+        handleItemChange,
+        handleItemLabelChange,
+        addItem,
+        deleteItem
+    } = useBasicsEditor(data, items, onDataChange, onItemsChange);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            onImageUpload(file);
-        }
-        e.target.value = '';
+        if (file) handleImageUpload(file);
+        e.target.value = ''; // Reset input
     };
-
-    const config: { key: keyof Resume['basics']; label: string; fullWidth?: boolean }[] = [
-        { key: 'name', label: '姓名' },
-        { key: 'title', label: '求职意向' },
-        { key: 'email', label: '电子邮箱', fullWidth: true },
-        { key: 'phone', label: '联系电话' },
-        { key: 'location', label: '所在城市' },
-    ];
 
     return (
         <div className={styles.container}>
             <h3 className={styles.title}>个人信息</h3>
 
             <div className={styles.editorBody}>
-                {/* 左侧：头像区域 (保持原生结构以维持特殊样式) */}
+                {/* --- 左侧：头像区域 --- */}
                 <div className={styles.avatarSection}>
-                    {basics.image ? (
+                    {data.avatar ? (
                         <div className={styles.previewContainer}>
-                            <img src={basics.image} alt="Avatar" className={styles.avatarPreview} />
+                            <img src={data.avatar} alt="Avatar" className={styles.avatarPreview} />
                             <button
                                 className={styles.removeBtn}
-                                onClick={onImageRemove}
+                                onClick={handleImageRemove}
                                 title="删除照片"
-                                type="button" // 显式声明 type 防止触发表单提交
+                                type="button"
                             >
                                 <X size={14} />
                             </button>
@@ -64,33 +62,81 @@ export const BasicsEditor = ({
                             <input
                                 type="file"
                                 accept="image/png, image/jpeg, image/jpg"
-                                onChange={handleFileChange}
+                                onChange={onFileChange}
                                 className={styles.hiddenInput}
                             />
                         </label>
                     )}
                 </div>
 
-                {/* 右侧：输入框网格区域 */}
-                <div className={styles.grid}>
-                    {config.map((item) => (
-                        <div
-                            key={item.key}
-                            className={cn(styles.inputGroup, item.fullWidth && styles.fullWidth)}
-                        >
-                            <label className={styles.fieldLabel}>{item.label}</label>
-
-                            {/* 迁移到 Shadcn Input */}
+                {/* --- 右侧：表单区域 --- */}
+                <div className={styles.formArea}>
+                    
+                    {/* 1. 固定核心字段 (姓名、职位) */}
+                    <div className={styles.grid}>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.fieldLabel}>姓名</label>
                             <Input
-                                value={basics[item.key] || ''}
-                                onChange={(e) => handleChange(item.key, e.target.value)}
-                                placeholder={`请输入${item.label}`}
-                                className="input-base bg-white"
+                                value={data.name || ''}
+                                onChange={(e) => handleDataChange('name', e.target.value)}
+                                placeholder="请输入姓名"
+                                className="bg-white"
                             />
                         </div>
-                    ))}
+                        <div className={styles.inputGroup}>
+                            <label className={styles.fieldLabel}>求职意向 / 职位</label>
+                            <Input
+                                value={data.title || ''}
+                                onChange={(e) => handleDataChange('title', e.target.value)}
+                                placeholder="如：Java 后端开发"
+                                className="bg-white"
+                            />
+                        </div>
+                    </div>
+
+                    <hr className={styles.divider} />
+
+                    {/* 2. 动态联系方式列表 */}
+                    <div className={styles.grid}>
+                        {items.map((item) => (
+                            <div key={item.id} className={styles.dynamicInputGroup}>
+                                <div className={styles.labelRow}>
+                                    {/* 允许用户修改 Label，例如把"电话"改成"手机" */}
+                                    <input 
+                                        className={styles.editableLabel}
+                                        value={item.label}
+                                        onChange={(e) => handleItemLabelChange(item.id, e.target.value)}
+                                    />
+                                    {/* 只有非系统字段(custom)才显示删除按钮，或者允许全部删除 */}
+                                    <button 
+                                        onClick={() => deleteItem(item.id)}
+                                        className={styles.deleteItemBtn}
+                                        title="删除此字段"
+                                    >
+                                        <X size={12} />
+                                    </button>
+                                </div>
+                                <Input
+                                    value={item.value}
+                                    onChange={(e) => handleItemChange(item.id, e.target.value)}
+                                    placeholder={`请输入${item.label}`}
+                                    className="bg-white"
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* 添加按钮 */}
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={addItem}
+                        className={styles.addItemBtn}
+                    >
+                        <Plus size={14} className="mr-1" /> 添加自定义字段
+                    </Button>
                 </div>
             </div>
         </div>
     );
-}
+};

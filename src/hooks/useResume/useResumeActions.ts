@@ -1,35 +1,39 @@
-import type { Resume } from '../../types/resume';
-// import { del } from 'idb-keyval'; // 如果移除了 disconnectSync，这个引用也可以删了
-import { fileToBase64 } from '../../utils/imageHelper';
+import type { Resume, BasicInfoData } from '@/types/resume';
+import { fileToBase64 } from '@/utils/imageHelper';
 
 /**
- * 这个 Hook 专门处理用户的主动操作
- * 比如：点击导出、点击打印、上传头像
+ * 处理用户交互动作 (导出、打印、头像上传)
  */
 export const useResumeActions = (
     resume: Resume,
-    // setSyncHandle 和 syncImport 都不需要了，因为 Editor 不再处理导入和断开连接
-    updateImage: (imageBase64: string | undefined) => void
+    // 传入新的更新方法，签名需匹配 useResumeState 的 updateBasicData
+    updateBasicData: (data: Partial<BasicInfoData>) => void
 ) => {
 
     // 1. 导出 JSON
     const exportJson = () => {
         try {
+            // 获取用户姓名作为文件名，注意新路径：sections.basic.data.name
+            const userName = resume.sections.basic.data.name || 'resume';
+            const fileName = `resume-${userName}.json`;
+
             const jsonData = JSON.stringify(resume, null, 2);
             const blob = new Blob([jsonData], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
+            
             const link = document.createElement('a');
             link.href = url;
-            link.download = `resume-${resume.basics.name || 'data'}.json`;
+            link.download = fileName;
             link.click();
+            
             URL.revokeObjectURL(url);
         } catch (error) {
             console.error('导出失败:', error);
-            alert('导出失败');
+            alert('导出失败，请检查控制台日志');
         }
     };
 
-    // 2. 打印
+    // 2. 打印 (调用系统打印，配合 CSS @media print)
     const printResume = () => window.print();
 
     // 3. 动作: 上传头像
@@ -40,15 +44,20 @@ export const useResumeActions = (
                 return;
             }
             const base64 = await fileToBase64(file);
-            updateImage(base64);
+            
+            // 🔥 适配新架构：通过 partial update 更新 avatar 字段
+            updateBasicData({ avatar: base64 });
+            
         } catch (error: any) {
+            console.error(error);
             alert(error.message || '图片上传失败');
         }
     };
 
     // 4. 动作: 删除头像
     const removeAvatar = () => {
-        updateImage(undefined);
+        // 传入 undefined 或空字符串来清空
+        updateBasicData({ avatar: '' });
     };
 
     return {

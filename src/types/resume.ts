@@ -109,7 +109,7 @@ export interface Resume {
   // 使用字典存储，Key 是 SectionConfig.id
   // 这样设计非常灵活，无论是系统模块还是自定义模块，都去这里取数据
   sections: {
-    // 基础信息特殊处理
+    // 基础信息
     basic: BasicsSection;
     
     // 其他模块的数据
