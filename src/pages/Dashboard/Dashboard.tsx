@@ -34,7 +34,6 @@ export default function Dashboard() {
                     syncHandle={syncHandle}
                     connectFolder={connectFolder}
                     importResume={importResume}
-                    createResume={createResume}
                 />
 
                 {/* 内容滚动区 */}

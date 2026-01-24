@@ -8,10 +8,9 @@ interface HeaderProps {
     syncHandle: FileSystemDirectoryHandle | null;
     connectFolder: () => void;
     importResume: () => void;
-    createResume: () => void;
 }
 
-export function Header({ syncHandle, connectFolder, importResume, createResume }: HeaderProps) {
+export function Header({ syncHandle, connectFolder, importResume }: HeaderProps) {
     return (
         <header className={Styles.header}>
             {/* 左侧：标题 */}
