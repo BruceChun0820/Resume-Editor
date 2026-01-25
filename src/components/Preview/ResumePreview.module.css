@@ -1,180 +1,250 @@
+/* src/components/Preview/ResumePreview.module.css */
 .paper {
+  /* --- 尺寸与布局 --- */
   width: 210mm;
-  /* 移除 min-height 固定值，防止内容少时留白过大，改用 flex 撑开 */
-  min-height: 297mm; 
-  padding: 20mm; /* 标准 A4 边距通常是 20mm 或 2.54cm */
+  min-height: 297mm;
+  /* 预览时保持 15mm 边距，确保内容不会进入"视觉缝隙"区域 */
+  padding: 15mm; 
   margin: 0 auto;
-  background-color: #fff;
   position: relative;
   box-sizing: border-box;
-  /* 选用更专业的字体栈 */
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  color: #111827; /* gray-900 */
-  line-height: 1.5;
-  
-  /* 阴影效果只在预览时显示，打印时会消失 */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
-}
-
-/* --- Header --- */
-.header {
-  display: flex;
-  align-items: flex-start; /* 顶部对齐 */
-  gap: 24px;
-  margin-bottom: 32px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid #e5e7eb; /* gray-200 */
-}
-
-.avatar {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 4px; /* 轻微圆角 */
-  border: 1px solid #e5e7eb;
-}
-
-.headerContent {
-  flex: 1;
   display: flex;
   flex-direction: column;
+  
+  /* --- 字体设置 --- */
+  font-family: "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", "Noto Sans CJK SC", "Heiti SC", sans-serif;
+  color: var(--text-main);
+  line-height: 1.5;
+    
+  /* 1. 基础背景色：透明 (这样才能透出缝隙) */
+  background-color: transparent;
+
+  /* 2. 定义循环周期：必须严格等于 A4 物理高度 (297mm) */
+  background-size: 100% 297mm;
+  
+  /* 3. 多重渐变层叠实现"纸张+阴影+缝隙"效果 */
+  background-image: 
+    /* 图层1 (最上层): 纸张底部阴影 (可选，增加立体感) */
+    linear-gradient(to bottom,
+      transparent 281mm,               /* 顶部透明 */
+      rgba(0, 0, 0, 0.05) 282mm,       /* 纸张边缘轻微阴影 */
+      transparent 282mm                /* 缝隙处透明 */
+    ),
+    
+    /* 图层2 (主体): 白色纸张 + 透明缝隙 */
+    linear-gradient(to bottom, 
+      #ffffff 0mm,                     /* 纸张开始 */
+      #ffffff 282mm,                   /* 纸张结束 (297-15mm) */
+      transparent 282mm,               /* 缝隙开始 */
+      transparent 297mm                /* 缝隙结束 (下一页开始) */
+    );
+
+  background-repeat: repeat-y;
+  
+  /* 移除外层阴影，因为现在是多张"碎纸"，大阴影会穿帮 */
+  box-shadow: none; 
+  /* 如果想要每张纸都有阴影，需要非常复杂的 drop-shadow 滤镜，性能较差。
+     建议用上面的 图层1 模拟内部阴影即可。 */
+  
+  /* 打印颜色校准 */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.header {
+  display: flex;
+  align-items: center; /* 还原垂直居中 */
+  gap: 24px;
+  margin-bottom: 15px; /* 还原间距 */
+  /* 移除之前加的 header 底部粗黑线，原版是没有的 */
+  border-bottom: none; 
 }
 
 .name {
   margin: 0 0 4px 0;
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 800;
-  line-height: 1.2;
+  letter-spacing: -0.5px;
+  color: var(--gray-900);
 }
 
 .jobTitle {
   font-size: 16px;
-  color: #4b5563; /* gray-600 */
-  margin: 0 0 12px 0;
+  color: var(--gray-600);
+  margin-top: 4px;
   font-weight: 500;
 }
 
+/* 还原 Grid 网格布局 */
 .basicsGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 24px; /* 行间距8px，列间距24px */
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 强制两列 */
+  gap: 6px 25px;
+  color: var(--gray-800);
+  margin-top: 12px;
   font-size: 14px;
-  color: #374151; /* gray-700 */
+  width: 100%;
 }
 
 .contactItem {
   display: flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
+}
+
+/* 还原头像尺寸 */
+.avatar {
+  width: 120px;
+  height: 160px;
+  object-fit: cover;
+  border: 1px solid var(--gray-200);
+}
+
+.headerContent {
+  flex: 1;
 }
 
 /* --- Body Section --- */
 .section {
-  margin-bottom: 24px;
-  break-inside: auto; /* 允许在板块内部换页 */
+  break-inside: auto;
+  margin-bottom: 0px;
 }
 
+/* 还原板块标题样式：细灰线、18px */
 .sectionTitle {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
-  color: #111827;
+  color: var(--gray-800);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 2px solid #111827; /* 更加醒目的分割线 */
-  padding-bottom: 4px;
-  margin: 0 0 12px 0;
-  break-after: avoid; /* 避免标题在页面底部被孤立 */
+  border-bottom: 1px solid var(--gray-200); /* 细灰线 */
+  padding-bottom: 2px;
+  margin-bottom: 6px;
+  break-after: avoid;
 }
 
-/* --- List Items --- */
 .list {
   list-style: none !important;
   padding: 0;
   margin: 0;
 }
 
+/* 还原列表项样式：虚线分割、紧凑间距 */
 .listItem {
-  margin-bottom: 16px;
-  break-inside: avoid; /* 尽量避免将一个条目切成两半 */
+  break-inside: auto;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px dashed var(--gray-200); /* 虚线 */
+}
+
+.listItem:last-child {
+  border-bottom: none;
 }
 
 .itemHeaderLine {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 4px;
-  flex-wrap: wrap; /* 小屏时允许换行 */
-}
-
-.itemTitleGroup {
-    flex: 1;
-    padding-right: 16px;
+  margin-bottom: 2px;
+  gap: 20px;
 }
 
 .itemTitle {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
-  color: #111827;
+  color: var(--gray-800);
 }
 
 .itemSubtitle {
   font-size: 14px;
-  color: #4b5563;
-  font-weight: 500;
+  color: var(--gray-600);
+  font-style: italic; /* 还原斜体 */
 }
 
 .itemDate {
   font-size: 13px;
-  color: #6b7280;
-  white-space: nowrap;
-  font-feature-settings: "tnum"; /* 等宽数字，看起来更整齐 */
+  color: var(--gray-500);
+  font-weight: 500;
 }
 
 /* --- Rich Text Content --- */
 .itemDescription {
+  margin: 8px 0;
   font-size: 14px;
-  color: #374151;
+  color: var(--gray-800);
+  line-height: 1.6;
   text-align: justify;
 }
 
-/* 强制重置 Tiptap 输出的样式 */
-.itemDescription :global(p) {
-  margin: 0 0 4px 0 !important;
+/* 针对富文本的深度选择器 (复刻原版逻辑) */
+.itemDescription :global(ul) {
+  list-style-type: disc !important;
+  padding-left: 1.25rem !important;
+  margin: 6px 0 !important;
 }
 
-.itemDescription :global(ul), 
 .itemDescription :global(ol) {
-  margin: 4px 0 !important;
-  padding-left: 1.2em !important;
+  list-style-type: decimal !important;
+  padding-left: 1.25rem !important;
+  margin: 6px 0 !important;
 }
 
 .itemDescription :global(li) {
+  display: list-item !important;
   margin-bottom: 2px !important;
+  line-height: 1.6 !important;
 }
+
+.itemDescription :global(p) {
+  margin: 0 !important;
+}
+
+/* src/components/Preview/ResumePreview.module.css */
+
+/* ... 上面的样式保持不变 ... */
 
 /* --- Print Styles --- */
 @media print {
   @page {
-    margin: 0;
-    size: auto;
+    margin: 15mm; /* 上下左右每一页都会有 15mm 的白边 */
+    size: auto;   /* 自动适配纸张大小 */
   }
   
   :global(body) {
+    margin: 0;
+    padding: 0;
     background: white;
   }
 
   .paper {
-    width: 100% !important;
-    height: auto !important;
-    min-height: 0 !important;
+    padding: 0 !important;
+    
+    /* 重置容器属性，让它自然填充 @page 留出的安全区域 */
     margin: 0 !important;
-    padding: 20mm !important; /* 保持打印边距 */
+    width: 100% !important; /* 填满剩余空间 */
+    
+    /* 移除屏幕预览时的装饰效果 */
     box-shadow: none !important;
     border: none !important;
+    min-height: 0 !important;
+    height: auto !important;
     overflow: visible !important;
+    background-image: none !important;
+    background-color: white !important;
   }
 
-  /* 打印时隐藏占位符或空元素 */
+  /* 3. 智能分页控制 (配合之前的 break-inside) */
+  /* 确保板块标题不会留在上一页最后一行 */
+  /* .sectionTitle {
+    break-after: avoid; 
+  } */
+
+  /* 确保列表项尽量不被切断 */
+  /* .listItem {
+    break-inside: avoid;
+  } */
+  
+  /* 打印时隐藏空板块 */
   .section:empty {
     display: none;
   }

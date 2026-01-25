@@ -1,10 +1,10 @@
-import { useEffect } from 'react'; // 🔥 新增
+import { useEffect, useMemo } from 'react'; // 🔥 新增
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import UnderlineExtension from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
-import { 
-    Bold, Italic, List, ListOrdered, Underline, 
+import {
+    Bold, Italic, List, ListOrdered, Underline,
     AlignCenter, AlignJustify, AlignLeft, AlignRight,
     Sparkles // 🔥 新增 AI 图标
 } from 'lucide-react';
@@ -18,8 +18,9 @@ interface RichEditorProps {
 }
 
 export const RichEditor = ({ content, onChange, onAiPolish }: RichEditorProps) => {
-    const editor = useEditor({
-        extensions: [
+
+    const extensions = useMemo(() => {
+        return [
             StarterKit,
             UnderlineExtension,
             TextAlign.configure({
@@ -27,11 +28,15 @@ export const RichEditor = ({ content, onChange, onAiPolish }: RichEditorProps) =
                 alignments: ['left', 'center', 'right', 'justify'],
                 defaultAlignment: 'left',
             }),
-        ],
+        ];
+    }, []); // 空依赖数组，表示只初始化一次
+
+    const editor = useEditor({
+        extensions: extensions, // 🔥 3. 这里传入缓存后的变量
         content: content,
         editorProps: {
             attributes: {
-                class: 'prose-content focus:outline-none', 
+                class: 'prose-content focus:outline-none',
             },
         },
         onUpdate: ({ editor }) => {
@@ -107,8 +112,8 @@ export const RichEditor = ({ content, onChange, onAiPolish }: RichEditorProps) =
                 {onAiPolish && (
                     <div className={styles.toolbarRight}>
                         <div className={styles.divider} />
-                        <button 
-                            className={styles.aiButton} 
+                        <button
+                            className={styles.aiButton}
                             onClick={onAiPolish}
                             type="button"
                         >

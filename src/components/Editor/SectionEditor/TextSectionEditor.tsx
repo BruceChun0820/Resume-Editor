@@ -47,7 +47,6 @@ export const TextSectionEditor = ({
                 <RichEditor
                     content={content || ''}
                     onChange={onContentChange}
-                    // 这里可以接入 AI 润色
                     onAiPolish={() => alert('AI 润色功能开发中...')} 
                 />
             </div>

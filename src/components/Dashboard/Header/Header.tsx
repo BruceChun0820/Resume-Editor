@@ -8,7 +8,7 @@ interface HeaderProps {
     syncHandle: FileSystemDirectoryHandle | null;
     connectFolder: () => void;
     importResume: () => void;
-}
+}   
 
 export function Header({ syncHandle, connectFolder, importResume }: HeaderProps) {
     return (

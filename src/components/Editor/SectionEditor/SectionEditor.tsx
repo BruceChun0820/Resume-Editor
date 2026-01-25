@@ -5,7 +5,7 @@ import styles from './SectionEditor.module.css';
 import { RichEditor } from '../../Common/TiptapEditor/RichEditor';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useSectionEditor } from './useSectionEditor'; // 引入 Hook
+import { useSectionEditor } from './useSectionEditor';
 
 interface SectionEditorProps {
     sectionId: string;
@@ -45,7 +45,7 @@ export const SectionEditor = ({
                     <label className={styles.label}>板块标题</label>
                     <Input
                         value={title}
-                        onChange={handleTitleChange} // 直接绑定 Hook 返回的方法
+                        onChange={handleTitleChange}
                         placeholder="请输入板块名称"
                         className={styles.titleInput}
                     />
@@ -77,7 +77,7 @@ export const SectionEditor = ({
                                         value={(item[cfg.key] as string) || ''}
                                         placeholder={cfg.placeholder}
                                         onChange={(e) => updateItem(index, cfg.key, e.target.value)}
-                                        className="bg-white"
+                                        className="input-base"
                                     />
                                 </div>
                             ))}

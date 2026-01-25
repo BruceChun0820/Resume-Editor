@@ -2,12 +2,13 @@
 
 /* --- 外部容器 --- */
 .container {
-  /* 假设使用了 Tailwind 或全局变量，这里做兜底 */
-  border: 1px solid #e5e7eb; 
+  /* 替换 #e5e7eb -> var(--border-main) */
+  border: 1px solid var(--border-main);
   padding: 24px;
   margin-bottom: 24px;
-  border-radius: 8px; /* var(--radius) */
-  background-color: #fff;
+  border-radius: var(--radius);
+  /* 替换 #fff -> var(--bg-card) */
+  background-color: var(--bg-card);
   transition: box-shadow 0.2s;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
@@ -32,7 +33,7 @@
   display: block;
   font-size: 11px;
   font-weight: 700;
-  color: #6b7280; /* var(--gray-500) */
+  color: var(--text-muted);
   margin-bottom: 4px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -44,12 +45,13 @@
   font-family: inherit;
   font-size: 18px;
   font-weight: 700;
-  color: #111827; /* var(--gray-900) */
+  /* 替换 #111827 -> var(--text-main) */
+  color: var(--text-main);
   
-  /* 覆盖 Shadcn 默认样式 */
   background: transparent !important;
   border: none !important;
-  border-bottom: 2px solid #e5e7eb !important; /* var(--gray-200) */
+  /* 替换 #e5e7eb -> var(--border-main) */
+  border-bottom: 2px solid var(--border-main) !important;
   border-radius: 0 !important;
   box-shadow: none !important;
   outline: none !important;
@@ -60,13 +62,15 @@
 }
 
 .titleInput:focus {
-  border-bottom-color: #111827 !important;
+  /* 替换 #111827 -> var(--gray-900) */
+  border-bottom-color: var(--gray-900) !important;
 }
 
 .divider {
   margin: 20px 0;
   border: none;
-  border-top: 1px solid #f3f4f6;
+  /* 替换 #f3f4f6 -> var(--gray-100) */
+  border-top: 1px solid var(--gray-100);
 }
 
 /* --- 列表区域 --- */
@@ -77,16 +81,20 @@
 }
 
 .listItemCard {
-  background: #f9fafb; /* var(--gray-50) */
+  /* 替换 #f9fafb -> var(--gray-50) */
+  background: var(--gray-50);
   padding: 20px;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  /* 替换 #e5e7eb -> var(--border-main) */
+  border: 1px solid var(--border-main);
   transition: background-color 0.2s;
 }
 
 .listItemCard:hover {
-  background: #fff;
-  border-color: #d1d5db;
+  /* 替换 #fff -> var(--bg-card) */
+  background: var(--bg-card);
+  /* 替换 #d1d5db -> var(--gray-300) */
+  border-color: var(--gray-300);
   box-shadow: 0 2px 6px rgba(0,0,0,0.04);
 }
 
@@ -99,9 +107,11 @@
 
 .itemNumber {
   font-size: 12px;
-  color: #6b7280;
+  /* 替换 #6b7280 -> var(--text-muted) */
+  color: var(--text-muted);
   font-weight: 600;
-  background: #e5e7eb;
+  /* 替换 #e5e7eb -> var(--border-main) */
+  background: var(--border-main);
   padding: 2px 8px;
   border-radius: 4px;
 }
@@ -109,12 +119,11 @@
 /* --- 输入框网格 --- */
 .inputGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 1:1 两列布局 */
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-bottom: 16px;
 }
 
-/* 在小屏幕下自动切回单列 */
 @media (max-width: 640px) {
   .inputGrid {
     grid-template-columns: 1fr;
@@ -130,7 +139,8 @@
 .fieldLabel {
   font-size: 12px;
   font-weight: 500;
-  color: #4b5563; /* var(--gray-600) */
+  /* 替换 #4b5563 -> var(--gray-600) */
+  color: var(--gray-600);
 }
 
 /* --- 添加按钮 --- */
@@ -138,8 +148,10 @@
   width: 100%;
   padding: 12px;
   background-color: transparent;
-  border: 2px dashed #d1d5db; /* var(--gray-300) */
-  color: #6b7280;
+  /* 替换 #d1d5db -> var(--gray-300) */
+  border: 2px dashed var(--gray-300);
+  /* 替换 #6b7280 -> var(--text-muted) */
+  color: var(--text-muted);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
@@ -153,7 +165,10 @@
 }
 
 .addButton:hover {
-  border-color: #6b7280;
-  color: #111827;
-  background-color: #f9fafb;
+  /* 替换 #6b7280 -> var(--text-main) */
+  border-color: var(--text-main);
+  /* 替换 #111827 -> var(--text-main) */
+  color: var(--text-main);
+  /* 替换 #f9fafb -> var(--gray-50) */
+  background-color: var(--gray-50);
 }

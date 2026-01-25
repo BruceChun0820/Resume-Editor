@@ -1,5 +1,5 @@
 // src/components/Editor/BasicsEditor/BasicsEditor.tsx
-import { Upload, X, Plus, Trash2 } from "lucide-react";
+import { Upload, X, Plus } from "lucide-react"; // 移除了没用到的 Trash2
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import styles from "./BasicsEditor.module.css";
@@ -76,11 +76,12 @@ export const BasicsEditor = ({
                     <div className={styles.grid}>
                         <div className={styles.inputGroup}>
                             <label className={styles.fieldLabel}>姓名</label>
+                            {/* 应用全局 input-base 样式 */}
                             <Input
                                 value={data.name || ''}
                                 onChange={(e) => handleDataChange('name', e.target.value)}
                                 placeholder="请输入姓名"
-                                className="bg-white"
+                                className="input-base"
                             />
                         </div>
                         <div className={styles.inputGroup}>
@@ -89,7 +90,7 @@ export const BasicsEditor = ({
                                 value={data.title || ''}
                                 onChange={(e) => handleDataChange('title', e.target.value)}
                                 placeholder="如：Java 后端开发"
-                                className="bg-white"
+                                className="input-base"
                             />
                         </div>
                     </div>
@@ -101,13 +102,13 @@ export const BasicsEditor = ({
                         {items.map((item) => (
                             <div key={item.id} className={styles.dynamicInputGroup}>
                                 <div className={styles.labelRow}>
-                                    {/* 允许用户修改 Label，例如把"电话"改成"手机" */}
+                                    {/* 允许用户修改 Label */}
                                     <input 
                                         className={styles.editableLabel}
                                         value={item.label}
                                         onChange={(e) => handleItemLabelChange(item.id, e.target.value)}
                                     />
-                                    {/* 只有非系统字段(custom)才显示删除按钮，或者允许全部删除 */}
+                                    {/* 删除按钮 */}
                                     <button 
                                         onClick={() => deleteItem(item.id)}
                                         className={styles.deleteItemBtn}
@@ -120,18 +121,16 @@ export const BasicsEditor = ({
                                     value={item.value}
                                     onChange={(e) => handleItemChange(item.id, e.target.value)}
                                     placeholder={`请输入${item.label}`}
-                                    className="bg-white"
+                                    className="input-base"
                                 />
                             </div>
                         ))}
                     </div>
 
-                    {/* 添加按钮 */}
+                    {/* 添加按钮：使用全局 btn-secondary 和虚线边框 */}
                     <Button 
-                        variant="outline" 
-                        size="sm" 
+                        className={`btn-secondary border-dashed ${styles.addItemBtn}`}
                         onClick={addItem}
-                        className={styles.addItemBtn}
                     >
                         <Plus size={14} className="mr-1" /> 添加自定义字段
                     </Button>

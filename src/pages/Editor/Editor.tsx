@@ -1,31 +1,26 @@
-import { EditorSidebar } from '@/components/Editor/EditorSidebar/EditorSidebar'
-import { ResumePreview } from '@/components/Preview/ResumePreview'
-import { useResume } from '@/hooks/useResume/useResume'
-import { useNavigate, useParams } from 'react-router-dom' // 引入 hook以此获取路由里的 id
+import { useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
-import Styles from './Editor.module.css'
-import '@/App.css'
-import { useRef } from 'react'
+import { EditorSidebar } from '@/components/Editor/EditorSidebar/EditorSidebar';
+import { ResumePreview } from '@/components/Preview/ResumePreview';
+import { useResume } from '@/hooks/useResume/useResume';
+import Styles from './Editor.module.css';
 
 export default function Editor() {
-  // 获取路由参数，比如 /editor/123 里的 "123"
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
   const resumeId = id || "default-resume";
 
-  // 从自定义 Hook 中获取所有数据和封装好的动作
-  const {
-    resume,
-    actions
-  } = useResume(resumeId);
+  // 1. 获取新版 Hook 数据
+  const { resume, actions } = useResume(resumeId);
 
   const componentRef = useRef<HTMLDivElement>(null);
 
+  // 2. 配置打印功能
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
     documentTitle: `Resume-${resume.name || 'Untitled'}`,
-    onAfterPrint: () => console.log('打印完成'),
+    // 注入打印专用样式，确保无页眉页脚，背景色准确
     pageStyle: `
       @page {
         size: A4;
@@ -34,40 +29,38 @@ export default function Editor() {
       @media print {
         body {
           -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
       }
     `,
   });
 
+  // 3. 聚合 Actions：用页面级的打印函数覆盖默认的空函数
+  const enhancedActions = {
+    ...actions,
+    printResume: handlePrint,
+  };
+
   return (
     <div className={Styles.appContainer}>
-      {/* 左侧编辑器 */}
-      <EditorSidebar
-        // 数据状态
-        resume={resume}
+      {/* 左侧：侧边栏容器 
+         关键：CSS 中 .sidebarWrapper 限制了它的宽度
+      */}
+      <div className={Styles.sidebarWrapper}>
+        <EditorSidebar
+          resume={resume}
+          actions={enhancedActions} // 🔥 关键修改：只传这一个对象
+          onBack={() => navigate('/')}
+        />
+      </div>
 
-        // 基础编辑动作 (来自 useResumeState)
-        onBasicsUpdate={actions.updateBasics}
-        onSectionUpdate={actions.updateSection}
-        onAddSection={actions.addSection}
-        onDeleteSection={actions.deleteSection}
-        onResumeReset={actions.resetResume}
-        onBack={() => navigate('/')}
-        onRename={actions.renameResume}
-
-        // 交互与同步动作 (来自 useResumeActions)
-        onUploadAvatar={actions.uploadAvatar}
-        onRemoveAvatar={actions.removeAvatar}
-
-        // 保留导出和打印
-        onExportJson={actions.exportJson}
-        onPrint={handlePrint}
-      />
-
-      {/* 右侧预览区 */}
+      {/* 右侧：预览区容器 */}
       <div className={Styles.previewContainer}>
-        <div ref={componentRef}>
-          <ResumePreview resume={resume} />
+        {/* 纸张包裹层：负责投影和 A4 尺寸限制 */}
+        <div className={Styles.paperWrapper}>
+          <div ref={componentRef}>
+            <ResumePreview resume={resume} />
+          </div>
         </div>
       </div>
     </div>
