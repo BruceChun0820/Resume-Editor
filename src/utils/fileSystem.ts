@@ -27,7 +27,7 @@ export const verifyPermission = async (handle: FileSystemHandle, readWrite: bool
 
 // 辅助函数：生成安全的文件名
 const getSafeFileName = (resumeName: string) => {
-    const safeName = (resumeName || '未命名简历').replace(/[\\/:*?"<>|]/g, '_');
+    const safeName = (resumeName || '未命名的简历').replace(/[\\/:*?"<>|]/g, '_');
     return `${safeName}.json`;
 };
 
@@ -37,7 +37,7 @@ export const saveResumeToLocal = async (dirHandle: FileSystemDirectoryHandle, re
     try {
         // 1. 数据兜底
         if (!resumeData.id) resumeData.id = Date.now().toString();
-        if (!resumeData.name) resumeData.name = "未命名简历";
+        if (!resumeData.name) resumeData.name = "未命名的简历";
 
         const resumeId = resumeData.id;
         const newFileName = getSafeFileName(resumeData.name);

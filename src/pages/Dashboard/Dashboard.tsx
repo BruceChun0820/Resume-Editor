@@ -20,7 +20,8 @@ export default function Dashboard() {
         deleteResume,
         duplicateResume,
         importResume,
-        connectFolder
+        connectFolder,
+        disconnectFolder
     } = useDashboard();
 
     return (
@@ -34,6 +35,7 @@ export default function Dashboard() {
                     syncHandle={syncHandle}
                     connectFolder={connectFolder}
                     importResume={importResume}
+                    disconnectFolder={disconnectFolder}
                 />
 
                 {/* 内容滚动区 */}

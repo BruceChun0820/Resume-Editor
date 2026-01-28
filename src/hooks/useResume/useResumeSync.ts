@@ -1,59 +1,61 @@
-import { useState, useEffect } from 'react';
+// src/hooks/useResumeSync.ts
+import { useEffect } from 'react';
 import type { Resume } from '@/types/resume';
-import { getDirectoryHandle, verifyPermission, saveResumeToLocal } from '@/utils/fileSystem';
-import { del } from 'idb-keyval';
+import { saveResumeToLocal } from '@/utils/fileSystem';
+import { useFileSystemSync } from '../useFileSystemSync/useFileSystemSync'; // 引入新 Hook
 
 export const useResumeSync = (resume: Resume) => {
-    const [syncHandle, setSyncHandle] = useState<FileSystemDirectoryHandle | null>(null);
 
-    // 1. 初始化逻辑：尝试恢复文件夹连接
+    const { syncHandle, disconnect } = useFileSystemSync();
+
+    // 1. 自动保存逻辑 (监听 resume 变化 -> 写入硬盘)
     useEffect(() => {
-        if (typeof window === 'undefined') return;
+        if (!resume || !resume.id) return;
 
-        const initHandle = async () => {
-            try {
-                const savedHandle = await getDirectoryHandle();
-                // false 表示只检查权限状态，不立即请求弹窗，避免页面一加载就弹窗
-                if (savedHandle && await verifyPermission(savedHandle, false)) {
-                    setSyncHandle(savedHandle);
-                    console.log('自动恢复了文件夹连接:', savedHandle.name);
-                }
-            } catch (err) {
-                console.warn('无法恢复文件夹连接:', err);
-            }
-        };
-        initHandle();
-    }, []);
-
-    // 2. 自动保存逻辑 (监听 resume 变化 -> 写入硬盘)
-    useEffect(() => {
-        // 如果没有关联文件夹，什么都不做
-        if (!syncHandle) return;
-
-        // 防抖保存 (1秒)
+        // 设置防抖，避免每次按键都写硬盘
         const timer = setTimeout(async () => {
             try {
-                // saveResumeToLocal 需要适配新的 Resume 结构
-                await saveResumeToLocal(syncHandle, resume);
-                console.log('自动保存成功:', new Date().toLocaleTimeString());
+                // A. 保存详情到 LocalStorage (这里是单一数据源的持久化)
+                localStorage.setItem(`resume-${resume.id}`, JSON.stringify(resume));
+
+                // B. 更新 Dashboard 列表索引
+                const listStr = localStorage.getItem("resume-list");
+                let list = listStr ? JSON.parse(listStr) : [];
+                const index = list.findIndex((item: any) => item.id === resume.id);
+                
+                const newItem = {
+                    id: resume.id,
+                    name: resume.name,
+                    updatedAt: resume.updatedAt
+                };
+
+                if (index !== -1) {
+                    // 只有当关键信息变化时才更新列表，减少开销
+                    if (list[index].name !== newItem.name || list[index].updatedAt !== newItem.updatedAt) {
+                        list[index] = newItem;
+                        localStorage.setItem("resume-list", JSON.stringify(list));
+                    }
+                } else {
+                    list.unshift(newItem);
+                    localStorage.setItem("resume-list", JSON.stringify(list));
+                }
+
+                // C. 核心差异：直接检查 handle 是否存在，存在就写
+                if (syncHandle) {
+                    await saveResumeToLocal(syncHandle, resume);
+                    console.log('💾 [AutoSave] 已同步至本地文件');
+                }
+
             } catch (err) {
                 console.error('自动保存失败:', err);
             }
-        }, 1000);
+        }, 1000); // 1秒延迟
 
         return () => clearTimeout(timer);
-    }, [resume, syncHandle]);
-
-    // --- 动作 ---
-
-    const disconnectSync = async () => {
-        await del('resume_sync_dir_handle');
-        setSyncHandle(null);
-    };
+    }, [resume, syncHandle]); // 依赖 syncHandle，一旦连接建立，下次修改就会自动保存
 
     return {
         syncHandle,
-        setSyncHandle, // 暴露给 Dashboard 用来建立新连接
-        disconnectSync
+        disconnectSync: disconnect
     };
 };

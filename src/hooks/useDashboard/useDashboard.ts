@@ -5,6 +5,7 @@ import type { Resume } from "@/types/resume"; // 引用新类型
 import { isValidResume } from "@/utils/validator";
 import { getDirectoryHandle, storeDirectoryHandle, verifyPermission } from "@/utils/fileSystem";
 import { initialResume } from "@/data/initialResume"; // 引用新初始数据
+import { useFileSystemSync } from "../useFileSystemSync/useFileSystemSync";
 
 export interface ResumeItem {
     id: string;
@@ -13,12 +14,12 @@ export interface ResumeItem {
 }
 
 export const useDashboard = () => {
+
     const navigate = useNavigate();
 
-    // 保存当前的文件夹句柄
-    const [syncHandle, setSyncHandle] = useState<FileSystemDirectoryHandle | null>(null);
+    const { syncHandle, connect, disconnect } = useFileSystemSync();
 
-    // 1. 初始化数据列表
+    // 1. 数据列表逻辑 (保持不变，只关注 LocalStorage)
     const [resumes, setResumes] = useState<ResumeItem[]>(() => {
         if (typeof window === 'undefined') return [];
         const savedList = localStorage.getItem("resume-list");
@@ -33,32 +34,16 @@ export const useDashboard = () => {
         return [];
     });
 
-    // 自动同步列表到 LocalStorage
     useEffect(() => {
         localStorage.setItem("resume-list", JSON.stringify(resumes));
     }, [resumes]);
-
-    // 初始化时检查本地文件夹连接状态
-    useEffect(() => {
-        const checkSyncStatus = async () => {
-            try {
-                const handle = await getDirectoryHandle();
-                if (handle) {
-                    setSyncHandle(handle);
-                }
-            } catch (error) {
-                console.warn("Folder sync check failed", error);
-            }
-        };
-        checkSyncStatus();
-    }, []);
 
     // --- 核心动作 ---
 
     // A. 创建并跳转
     const createResume = () => {
         // 1. 算法：计算唯一名称
-        const baseName = "未命名简历";
+        const baseName = "未命名的简历";
         let uniqueName = baseName;
         let counter = 1;
         const existingNames = new Set(resumes.map(r => r.name));
@@ -73,10 +58,10 @@ export const useDashboard = () => {
         const currentDate = new Date().toISOString().split('T')[0];
 
         // 3. 准备完整的详情数据
-        // 🔥 关键修改：使用 structuredClone 进行深度克隆
+        // 使用 structuredClone 进行深度克隆
         // 避免不同简历共享同一个 initialResume.sections 对象引用
-        const safeInitial = typeof structuredClone === 'function' 
-            ? structuredClone(initialResume) 
+        const safeInitial = typeof structuredClone === 'function'
+            ? structuredClone(initialResume)
             : JSON.parse(JSON.stringify(initialResume));
 
         const newResumeDetail: Resume = {
@@ -97,7 +82,7 @@ export const useDashboard = () => {
         };
 
         setResumes((prev) => [newItem, ...prev]);
-        
+
         // 6. 跳转
         navigate(`/editor/${newId}`);
     };
@@ -114,7 +99,7 @@ export const useDashboard = () => {
     const duplicateResume = (original: ResumeItem) => {
         const newId = Date.now().toString();
         const currentDate = new Date().toISOString().split('T')[0];
-        
+
         const copyItem: ResumeItem = {
             id: newId,
             name: `${original.name} (副本)`,
@@ -167,13 +152,13 @@ export const useDashboard = () => {
                 const currentDate = new Date().toISOString().split('T')[0];
 
                 // 3. 确定简历名称
-                const candidateName = jsonData.name 
-                    || jsonData.sections?.basic?.data?.name 
+                const candidateName = jsonData.name
+                    || jsonData.sections?.basic?.data?.name
                     || "导入的简历";
 
                 // 4. 构造完整对象
                 const finalResume: Resume = {
-                    ...jsonData, 
+                    ...jsonData,
                     id: targetId,
                     updatedAt: currentDate,
                     name: candidateName
@@ -203,23 +188,16 @@ export const useDashboard = () => {
     };
 
     // E. 关联文件夹
-    const connectFolder = async () => {
-        try {
-            // 注意：此 API 仅在 HTTPS 或 localhost 下可用
-            const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
-            const hasPerm = await verifyPermission(handle, true);
-            
-            if (hasPerm) {
-                await storeDirectoryHandle(handle);
-                setSyncHandle(handle);
-            }
-        } catch (error: any) {
-            if (error.name !== 'AbortError') {
-                console.error('关联文件夹失败:', error);
-                alert('关联失败，请检查浏览器是否支持 File System Access API (需 HTTPS)');
-            }
-        }
+    const handleConnect = async () => {
+        await connect();
     };
+
+    const handleDisconnect = async () => {
+        // 这里可以加一个确认弹窗
+        if (window.confirm("确定要断开同步吗？")) {
+            await disconnect();
+        }
+    }
 
     return {
         resumes,
@@ -227,7 +205,10 @@ export const useDashboard = () => {
         deleteResume,
         duplicateResume,
         importResume,
-        connectFolder,
+        // 显式赋值写法 (Explicit Assignment)
+        // 外部看到的属性名 (Key) : 内部实际的变量/函数名 (Value)
+        connectFolder: handleConnect,
+        disconnectFolder: handleDisconnect,
         syncHandle,
     };
 };
