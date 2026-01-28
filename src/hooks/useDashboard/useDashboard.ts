@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Resume } from "@/types/resume"; // 引用新类型
 import { isValidResume } from "@/utils/validator";
-import { getDirectoryHandle, storeDirectoryHandle, verifyPermission } from "@/utils/fileSystem";
 import { initialResume } from "@/data/initialResume"; // 引用新初始数据
 import { useFileSystemSync } from "../useFileSystemSync/useFileSystemSync";
 

@@ -6,6 +6,9 @@ export const printResumeContent = (contentId: string, documentTitle: string) => 
     return;
   }
 
+  const originalTitle = document.title; // 备份原标题
+  document.title = documentTitle;
+
   // 2. 创建隐藏的 Iframe
   const iframe = document.createElement('iframe');
   iframe.style.position = 'absolute';
@@ -76,8 +79,10 @@ export const printResumeContent = (contentId: string, documentTitle: string) => 
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
     }
-    
-    // 可选：打印后移除 iframe (建议保留较长时间或不移除，以免打印对话框未出现就被销毁)
-    // document.body.removeChild(iframe); 
+
+    setTimeout(() => {
+      document.title = originalTitle;
+      document.body.removeChild(iframe); // 建议用完移除
+    }, 100);
   }, 500);
 };
