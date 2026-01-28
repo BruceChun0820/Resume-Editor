@@ -1,20 +1,16 @@
-// src/components/Preview/ResumePreview.tsx
+import { useRef } from 'react';
 import { 
   Briefcase, Mail, Phone, MapPin, Globe, Github, Linkedin, Link as LinkIcon 
 } from 'lucide-react';
 import type { Resume, BasicsSection, ResumeItem } from '@/types/resume';
 import styles from './ResumePreview.module.css';
 import { cn } from '@/lib/utils';
+// 引入我们提取的 hook
+import { usePreviewLayout } from '@/hooks/usePreviewLayout/usePreviewLayout';
 
 const iconMap: Record<string, any> = {
-  Phone: Phone,
-  Mail: Mail,
-  MapPin: MapPin,
-  Briefcase: Briefcase,
-  Globe: Globe,
-  Github: Github,
-  Linkedin: Linkedin,
-  Link: LinkIcon,
+  Phone: Phone, Mail: Mail, MapPin: MapPin, Briefcase: Briefcase,
+  Globe: Globe, Github: Github, Linkedin: Linkedin, Link: LinkIcon,
 };
 
 interface ResumePreviewProps {
@@ -22,12 +18,16 @@ interface ResumePreviewProps {
 }
 
 export const ResumePreview = ({ resume }: ResumePreviewProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  usePreviewLayout(containerRef, resume);
+
   const basicSection = resume.sections.basic as BasicsSection;
   const { data: basicData, items: basicItems } = basicSection;
 
   return (
-    <div className={styles.paper}>
-      {/* 1. Header (回归经典布局) */}
+    <div id="resume-preview-content" ref={containerRef} className={styles.paper}>
+      {/* Header */}
       <header className={styles.header}>
         {basicData.avatar && (
           <img
@@ -36,15 +36,11 @@ export const ResumePreview = ({ resume }: ResumePreviewProps) => {
             className={styles.avatar}
           />
         )}
-        
         <div className={styles.headerContent}>
           <h1 className={styles.name}>{basicData.name}</h1>
-          {/* 职位信息单独显示 */}
           {basicData.title && (
              <p className={styles.jobTitle}>{basicData.title}</p>
           )}
-          
-          {/* 回归 Grid 布局的联系方式 */}
           <div className={styles.basicsGrid}>
             {basicItems
               .filter(item => item.visible && item.value && item.value.trim() !== '')
@@ -61,13 +57,12 @@ export const ResumePreview = ({ resume }: ResumePreviewProps) => {
         </div>
       </header>
 
-      {/* 2. Body (动态板块) */}
+      {/* Body */}
       {resume.sectionOrder
         .filter(section => section.visible && section.id !== 'basic')
         .map(sectionConfig => {
           const sectionData = resume.sections[sectionConfig.id];
           
-          // A: 纯文本板块
           if (typeof sectionData === 'string') {
              return (
                <section key={sectionConfig.id} className={styles.section}>
@@ -80,20 +75,17 @@ export const ResumePreview = ({ resume }: ResumePreviewProps) => {
              );
           }
 
-          // B: 列表板块
           const listData = sectionData as ResumeItem[];
           if (!Array.isArray(listData)) return null;
 
           return (
             <section key={sectionConfig.id} className={styles.section}>
               <h3 className={styles.sectionTitle}>{sectionConfig.title}</h3>
-
               <ul className={styles.list}>
                 {listData
                   .filter(item => item.visible)
                   .map(item => {
                     const hasHeader = item.title || item.subtitle || item.dateRange;
-
                     return (
                       <li key={item.id} className={styles.listItem}>
                         {hasHeader && (
@@ -111,7 +103,7 @@ export const ResumePreview = ({ resume }: ResumePreviewProps) => {
                             )}
                           </div>
                         )}
-
+                        
                         {item.description && (
                           <div
                             className={cn(styles.itemDescription, "rich-text-content")}

@@ -1,63 +1,90 @@
 /* src/components/Preview/ResumePreview.module.css */
+/* --- 屏幕预览基础样式 --- */
 .paper {
-  /* --- 尺寸与布局 --- */
   width: 210mm;
-  min-height: 297mm;
-  /* 预览时保持 15mm 边距，确保内容不会进入"视觉缝隙"区域 */
-  padding: 15mm; 
   margin: 0 auto;
-  position: relative;
+  
+  /* 屏幕预览时的内边距 */
+  padding: 15mm;
+  
   box-sizing: border-box;
-  display: flex;
+  position: relative;
+  
+  /* 使用 Flex 布局方便对齐 */
+  display: flex; 
   flex-direction: column;
   
-  /* --- 字体设置 --- */
+  /* 视觉背景：白纸 + 灰缝 (预览用) */
+  background-color: white;
+  background-size: 100% 297mm;
+  background-image: linear-gradient(to bottom, 
+      #ffffff 0px,
+      #ffffff calc(297mm - 15mm),       /* 内容区结束 */
+      #e5e7eb calc(297mm - 15mm),       /* 边框线 */
+      #e5e7eb calc(297mm - 15mm + 1px),
+      #525659 calc(297mm - 15mm + 1px), /* 灰色缝隙 */
+      #525659 297mm                     
+  );
+  background-repeat: repeat-y;
+  
   font-family: "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", "Noto Sans CJK SC", "Heiti SC", sans-serif;
   color: var(--text-main);
   line-height: 1.5;
-    
-  /* 1. 基础背景色：透明 (这样才能透出缝隙) */
-  background-color: transparent;
-
-  /* 2. 定义循环周期：必须严格等于 A4 物理高度 (297mm) */
-  background-size: 100% 297mm;
-  
-  /* 3. 多重渐变层叠实现"纸张+阴影+缝隙"效果 */
-  background-image: 
-    /* 图层1 (最上层): 纸张底部阴影 (可选，增加立体感) */
-    linear-gradient(to bottom,
-      transparent 281mm,               /* 顶部透明 */
-      rgba(0, 0, 0, 0.05) 282mm,       /* 纸张边缘轻微阴影 */
-      transparent 282mm                /* 缝隙处透明 */
-    ),
-    
-    /* 图层2 (主体): 白色纸张 + 透明缝隙 */
-    linear-gradient(to bottom, 
-      #ffffff 0mm,                     /* 纸张开始 */
-      #ffffff 282mm,                   /* 纸张结束 (297-15mm) */
-      transparent 282mm,               /* 缝隙开始 */
-      transparent 297mm                /* 缝隙结束 (下一页开始) */
-    );
-
-  background-repeat: repeat-y;
-  
-  /* 移除外层阴影，因为现在是多张"碎纸"，大阴影会穿帮 */
-  box-shadow: none; 
-  /* 如果想要每张纸都有阴影，需要非常复杂的 drop-shadow 滤镜，性能较差。
-     建议用上面的 图层1 模拟内部阴影即可。 */
-  
-  /* 打印颜色校准 */
-  -webkit-print-color-adjust: exact;
-  print-color-adjust: exact;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* --- 打印样式 (修复空白问题的关键) --- */
+@media print {
+  /* 重置 Paper 容器 */
+  .paper {
+    display: block !important; /* 回归 Block 布局，防止 Flex 分页 Bug */
+    width: 100% !important;
+    height: auto !important;   /* 忽略 JS 设置的固定高度 */
+    margin: 0 !important;
+    
+    /* 🔥 关键：保持与预览一致的内边距 */
+    padding: 0mm !important; 
+    
+    /* 移除所有视觉背景和阴影 */
+    background: white !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  
+  /* 🔥 核心魔法：处理 JS 计算的分页缝隙 
+     在预览时，它是一个巨大的 margin-top。
+     在打印时，我们要把它变成一个单纯的“强制换页符”，并消除那个巨大的间距。
+  */
+  .pageBreakMargin {
+    /* 1. 强制清除 JS 设置的 inline margin-top */
+    margin-top: 0 !important; 
+    padding-top: 0 !important;
+    
+    /* 2. 告诉打印机：就在这里，切一刀，去下一页 */
+    break-before: page !important;
+    page-break-before: always !important; /* 兼容旧浏览器 */
+    
+    /* 3. 确保元素内容不丢 */
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  /* 其他打印优化 */
+  .section:empty { display: none; }
+  
+  /* 防止孤行：不要让只有一行文字留在上一页 */
+  .itemDescription {
+    widows: 2;
+    orphans: 2;
+  }
+}
+
+/* --- 内部样式 --- */
 .header {
   display: flex;
-  align-items: center; /* 还原垂直居中 */
+  align-items: center;
   gap: 24px;
-  margin-bottom: 15px; /* 还原间距 */
-  /* 移除之前加的 header 底部粗黑线，原版是没有的 */
-  border-bottom: none; 
+  margin-bottom: 15px;
 }
 
 .name {
@@ -75,10 +102,9 @@
   font-weight: 500;
 }
 
-/* 还原 Grid 网格布局 */
 .basicsGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 强制两列 */
+  grid-template-columns: repeat(2, 1fr);
   gap: 6px 25px;
   color: var(--gray-800);
   margin-top: 12px;
@@ -93,7 +119,6 @@
   white-space: nowrap;
 }
 
-/* 还原头像尺寸 */
 .avatar {
   width: 120px;
   height: 160px;
@@ -101,23 +126,19 @@
   border: 1px solid var(--gray-200);
 }
 
-.headerContent {
-  flex: 1;
-}
+.headerContent { flex: 1; }
 
-/* --- Body Section --- */
 .section {
   break-inside: auto;
   margin-bottom: 0px;
 }
 
-/* 还原板块标题样式：细灰线、18px */
 .sectionTitle {
   font-size: 18px;
   font-weight: 700;
   color: var(--gray-800);
   text-transform: uppercase;
-  border-bottom: 1px solid var(--gray-200); /* 细灰线 */
+  border-bottom: 1px solid var(--gray-200);
   padding-bottom: 2px;
   margin-bottom: 6px;
   break-after: avoid;
@@ -129,17 +150,14 @@
   margin: 0;
 }
 
-/* 还原列表项样式：虚线分割、紧凑间距 */
 .listItem {
   break-inside: auto;
   padding-bottom: 6px;
   margin-bottom: 6px;
-  border-bottom: 1px dashed var(--gray-200); /* 虚线 */
+  border-bottom: 1px dashed var(--gray-200);
 }
 
-.listItem:last-child {
-  border-bottom: none;
-}
+.listItem:last-child { border-bottom: none; }
 
 .itemHeaderLine {
   display: flex;
@@ -158,7 +176,7 @@
 .itemSubtitle {
   font-size: 14px;
   color: var(--gray-600);
-  font-style: italic; /* 还原斜体 */
+  font-style: italic;
 }
 
 .itemDate {
@@ -167,7 +185,6 @@
   font-weight: 500;
 }
 
-/* --- Rich Text Content --- */
 .itemDescription {
   margin: 8px 0;
   font-size: 14px;
@@ -176,15 +193,9 @@
   text-align: justify;
 }
 
-/* 针对富文本的深度选择器 (复刻原版逻辑) */
+/* 确保内部元素是块级显示，方便计算高度 */
 .itemDescription :global(ul) {
   list-style-type: disc !important;
-  padding-left: 1.25rem !important;
-  margin: 6px 0 !important;
-}
-
-.itemDescription :global(ol) {
-  list-style-type: decimal !important;
   padding-left: 1.25rem !important;
   margin: 6px 0 !important;
 }
@@ -195,57 +206,4 @@
   line-height: 1.6 !important;
 }
 
-.itemDescription :global(p) {
-  margin: 0 !important;
-}
-
-/* src/components/Preview/ResumePreview.module.css */
-
-/* ... 上面的样式保持不变 ... */
-
-/* --- Print Styles --- */
-@media print {
-  @page {
-    margin: 15mm; /* 上下左右每一页都会有 15mm 的白边 */
-    size: auto;   /* 自动适配纸张大小 */
-  }
-  
-  :global(body) {
-    margin: 0;
-    padding: 0;
-    background: white;
-  }
-
-  .paper {
-    padding: 0 !important;
-    
-    /* 重置容器属性，让它自然填充 @page 留出的安全区域 */
-    margin: 0 !important;
-    width: 100% !important; /* 填满剩余空间 */
-    
-    /* 移除屏幕预览时的装饰效果 */
-    box-shadow: none !important;
-    border: none !important;
-    min-height: 0 !important;
-    height: auto !important;
-    overflow: visible !important;
-    background-image: none !important;
-    background-color: white !important;
-  }
-
-  /* 3. 智能分页控制 (配合之前的 break-inside) */
-  /* 确保板块标题不会留在上一页最后一行 */
-  /* .sectionTitle {
-    break-after: avoid; 
-  } */
-
-  /* 确保列表项尽量不被切断 */
-  /* .listItem {
-    break-inside: avoid;
-  } */
-  
-  /* 打印时隐藏空板块 */
-  .section:empty {
-    display: none;
-  }
-}
+.itemDescription :global(p) { margin: 0 !important; }

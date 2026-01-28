@@ -1,50 +1,73 @@
-import { useEffect, useMemo } from 'react'; // 🔥 新增
+import { useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+
+// 🔥 1. 显式引入基础扩展，替代 StarterKit
+import Document from '@tiptap/extension-document';
+import Paragraph from '@tiptap/extension-paragraph';
+import Text from '@tiptap/extension-text';
+import Bold from '@tiptap/extension-bold';
+import Italic from '@tiptap/extension-italic';
+import History from '@tiptap/extension-history';
+import BulletList from '@tiptap/extension-bullet-list';
+import OrderedList from '@tiptap/extension-ordered-list';
+import ListItem from '@tiptap/extension-list-item';
+
+// 原有的扩展
 import UnderlineExtension from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
+
 import {
-    Bold, Italic, List, ListOrdered, Underline,
+    Bold as BoldIcon, Italic as ItalicIcon, List, ListOrdered, Underline,
     AlignCenter, AlignJustify, AlignLeft, AlignRight,
-    Sparkles // 🔥 新增 AI 图标
+    Sparkles
 } from 'lucide-react';
 import styles from './RichEditor.module.css';
 
 interface RichEditorProps {
     content: string;
     onChange: (html: string) => void;
-    onAiPolish?: () => void; // 🔥 新增：AI 润色回调
-    placeholder?: string;
+    onAiPolish?: () => void;
 }
 
 export const RichEditor = ({ content, onChange, onAiPolish }: RichEditorProps) => {
 
-    const extensions = useMemo(() => {
-        return [
-            StarterKit,
-            UnderlineExtension,
+    // 🔥 2. 在这里显式定义扩展列表
+    // 这样我们 100% 确定里面有什么，绝对不会有重复的 'underline'
+    const editor = useEditor({
+        extensions: [
+            Document,
+            Paragraph,
+            Text,
+            History, // 撤销/重做功能
+            Bold,
+            Italic,
+            UnderlineExtension, // 你的下划线扩展
+            BulletList,
+            OrderedList,
+            ListItem,
             TextAlign.configure({
                 types: ['heading', 'paragraph'],
                 alignments: ['left', 'center', 'right', 'justify'],
                 defaultAlignment: 'left',
             }),
-        ];
-    }, []); // 空依赖数组，表示只初始化一次
-
-    const editor = useEditor({
-        extensions: extensions, // 🔥 3. 这里传入缓存后的变量
+        ],
         content: content,
         editorProps: {
             attributes: {
                 class: 'prose-content focus:outline-none',
             },
         },
+        // 关键配置：解决 React StrictMode 下的双重渲染警告
+        immediatelyRender: false, 
         onUpdate: ({ editor }) => {
-            onChange(editor.getHTML());
+            const html = editor.getHTML();
+            if (html !== content) {
+                onChange(html);
+            }
         },
     });
 
-    // 如果没有这个，当父组件(比如AI)修改了数据，编辑器里显示的内容不会变
+    // 监听外部 content 变化同步到编辑器
     useEffect(() => {
         if (editor && content !== editor.getHTML()) {
             editor.commands.setContent(content);
@@ -58,8 +81,8 @@ export const RichEditor = ({ content, onChange, onAiPolish }: RichEditorProps) =
         {
             group: 'marks',
             actions: [
-                { icon: Bold, title: '加粗', active: 'bold', onClick: () => editor.chain().focus().toggleBold().run() },
-                { icon: Italic, title: '斜体', active: 'italic', onClick: () => editor.chain().focus().toggleItalic().run() },
+                { icon: BoldIcon, title: '加粗', active: 'bold', onClick: () => editor.chain().focus().toggleBold().run() },
+                { icon: ItalicIcon, title: '斜体', active: 'italic', onClick: () => editor.chain().focus().toggleItalic().run() },
                 { icon: Underline, title: '下划线', active: 'underline', onClick: () => editor.chain().focus().toggleUnderline().run() },
             ]
         },
@@ -83,7 +106,6 @@ export const RichEditor = ({ content, onChange, onAiPolish }: RichEditorProps) =
 
     return (
         <div className={styles.container}>
-            {/* 工具栏 */}
             <div className={styles.toolbar}>
                 <div className={styles.toolbarLeft}>
                     {toolbarConfig.map((group, index) => (
@@ -102,13 +124,11 @@ export const RichEditor = ({ content, onChange, onAiPolish }: RichEditorProps) =
                                     </button>
                                 );
                             })}
-                            {/* 只有不是最后一组时才显示分割线 */}
                             {index < toolbarConfig.length - 1 && <div className={styles.divider} />}
                         </div>
                     ))}
                 </div>
 
-                {/* 🔥 AI 按钮区域 */}
                 {onAiPolish && (
                     <div className={styles.toolbarRight}>
                         <div className={styles.divider} />
@@ -123,8 +143,6 @@ export const RichEditor = ({ content, onChange, onAiPolish }: RichEditorProps) =
                     </div>
                 )}
             </div>
-
-            {/* 编辑区域 */}
             <EditorContent editor={editor} className={styles.editorContent} />
         </div>
     );
