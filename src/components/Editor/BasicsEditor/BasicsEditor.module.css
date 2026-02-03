@@ -1,76 +1,48 @@
 /* src/components/Editor/BasicsEditor/BasicsEditor.module.css */
 
 .container {
-  /* 替换 #fff -> var(--bg-card) */
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  padding: 24px;
-  margin-bottom: 24px;
-  /* 替换 #e5e7eb -> var(--border-main) */
-  border: 1px solid var(--border-main);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.title {
-  margin: 0 0 24px 0;
-  font-size: 16px;
-  font-weight: 600;
-  /* 替换 #111827 -> var(--text-main) */
-  color: var(--text-main);
-  border-left: 4px solid var(--text-main);
-  padding-left: 12px;
-  line-height: 1;
+  width: 100%;
 }
 
 .editorBody {
   display: flex;
-  gap: 32px;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 24px;
+  align-items: stretch;
 }
 
-/* --- 左侧头像 --- */
+/* --- 头像区域 --- */
 .avatarSection {
-  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 12px;
 }
 
-.uploadBtn {
+.uploadBtn,
+.previewContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 100px;
-  /* 替换 #d1d5db -> var(--gray-300) */
-  border: 2px dashed var(--gray-300);
-  border-radius: 50%;
-  /* 替换 #6b7280 -> var(--text-muted) */
-  color: var(--text-muted);
-  cursor: pointer;
-  /* 替换 #f9fafb -> var(--gray-50) */
+  width: 150px;
+  height: 150px;
+  border-radius: 50%; /* 头像保持圆形，不强制使用系统圆角 */
+  
+  /* 颜色变量替换 */
+  border: 2px dashed var(--border-main);
   background-color: var(--gray-50);
+  color: var(--text-muted);
+  
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
   gap: 8px;
-  font-size: 12px;
-  font-weight: 500;
-  transition: all 0.2s ease;
 }
 
 .uploadBtn:hover {
-  /* 替换 #4b5563 -> var(--gray-600) */
-  border-color: var(--gray-600);
-  /* 替换 #1f2937 -> var(--gray-800) */
-  color: var(--gray-800);
-  /* 替换 #f3f4f6 -> var(--gray-100) */
+  border-color: var(--gray-500);
+  color: var(--text-main);
   background-color: var(--gray-100);
-}
-
-.hiddenInput {
-  display: none;
-}
-
-.previewContainer {
-  position: relative;
-  width: 100px;
-  height: 100px;
 }
 
 .avatarPreview {
@@ -78,60 +50,28 @@
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  /* 替换 #f3f4f6 -> var(--gray-100) */
-  border: 2px solid var(--gray-100);
-  background-color: var(--gray-50);
+  border: 2px solid var(--gray-50);
 }
 
-.removeBtn {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  /* 保持原本的红色，或者使用 danger 语义色，这里保持醒目红色 */
-  background: #ef4444;
-  color: white;
-  border: 2px solid white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
-  z-index: 10;
-}
-
-.removeBtn:hover {
-  transform: scale(1.1);
-  background: #dc2626;
-}
-
-/* --- 右侧表单 --- */
+/* --- 表单区域 --- */
 .formArea {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px 16px;
+  gap: 20px;
 }
 
-/* 小屏适配 */
-@media (max-width: 640px) {
-    .editorBody {
-        flex-direction: column;
-        align-items: center;
-    }
-    .grid {
-        grid-template-columns: 1fr;
-    }
+/* 容器查询保持不变 */
+@container formArea (max-width: 350px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .inputGroup {
@@ -143,74 +83,104 @@
 .fieldLabel {
   font-size: 13px;
   font-weight: 500;
-  /* 替换 #4b5563 -> var(--gray-600) */
-  color: var(--gray-600);
+  color: var(--gray-600); /* 使用核心灰色系 */
 }
 
-.divider {
-    border: none;
-    border-top: 1px solid var(--gray-100);
-    margin: 0;
+/* 删除头像按钮 */
+.removeBtn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 26px;
+  height: 26px;
+  
+  /* 这里的红色可以硬编码或使用 destructive 语义，为了保持一致性这里用 hex 配合变量 */
+  background: #ef4444; 
+  color: #ffffff;
+  
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s;
+  z-index: 10;
 }
 
-/* --- 动态字段组 --- */
+.removeBtn:hover {
+  background: #dc2626;
+}
+
+/* 动态列表 */
 .dynamicInputGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-/* 可编辑的标签样式 */
 .labelRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .editableLabel {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--gray-600);
-    border: none;
-    background: transparent;
-    padding: 0;
-    width: fit-content;
-    cursor: text;
-    border-bottom: 1px dashed transparent;
-    transition: border-color 0.2s;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-600);
+  border: none;
+  border-bottom: 1px dashed transparent;
+  background: transparent;
+  width: fit-content;
+  cursor: text;
+  padding: 0;
 }
 
-.editableLabel:hover, .editableLabel:focus {
-    /* 替换 #9ca3af -> var(--gray-400) */
-    border-bottom-color: var(--gray-400);
-    outline: none;
-    color: var(--text-main);
+.editableLabel:hover,
+.editableLabel:focus {
+  border-bottom-color: var(--gray-400);
+  outline: none;
+  color: var(--text-main);
 }
 
+.hiddenInput {
+  display: none;
+}
+
+/* 删除条目按钮 (小叉号) */
 .deleteItemBtn {
-    opacity: 0;
-    color: var(--gray-400);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    padding: 2px;
+  color: var(--gray-400);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
 }
 
 .deleteItemBtn:hover {
-    color: #ef4444;
-    background: #fef2f2;
-    border-radius: 4px;
+  color: #ef4444; /* 鼠标悬停变红 */
+  background-color: var(--gray-50);
 }
 
-/* 鼠标悬停在输入框组时，显示删除按钮 */
-.dynamicInputGroup:hover .deleteItemBtn {
-    opacity: 1;
+.divider {
+  border: none;
+  border-top: 1px solid var(--gray-100);
+  margin: 4px 0;
 }
 
-.addItemBtn {
-    align-self: flex-start;
-    margin-top: 4px;
-    /* 样式现在主要由 .btn-secondary 控制，这里只做微调 */
+/* 添加按钮的特殊样式：继承 btn-secondary 但改为虚线 */
+.addBtn {
+    width: 100%;
+    border-style: dashed;
+    color: var(--text-muted);
+}
+.addBtn:hover {
+    color: var(--text-main);
+    border-style: dashed; /* 保持虚线 */
 }

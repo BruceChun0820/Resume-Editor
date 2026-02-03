@@ -1,0 +1,70 @@
+/* src/components/Editor/FormArea/FormArea.module.css */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    /* 关键修复 1: 强制高度占满父容器，不被内容撑开 */
+    height: 100%; 
+    background-color: white;
+    border-right: 1px solid var(--gray-200, #e5e7eb);
+    /* 1. 移除固定宽度 */
+    width: auto;
+
+    /* 2. 设置弹性比例：占据剩余空间的 5/11 */
+    flex: 5; 
+
+    /* 3. 最小宽度保护：防止在小屏幕上被挤得太扁无法编辑 */
+    min-width: 480px;
+    flex-shrink: 0;
+    z-index: 10;
+    box-shadow: 4px 0 24px -12px rgba(0, 0, 0, 0.1);
+    
+    /* 关键修复 2: 隐藏溢出，强制让内部的 ScrollArea 处理滚动 */
+    overflow: hidden; 
+
+    container-type: inline-size;
+    container-name: formArea;
+}
+
+.header {
+    /* 头部固定高度，不缩放 */
+    flex-shrink: 0; 
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid var(--gray-100, #f3f4f6);
+    background-color: white;
+    z-index: 20;
+}
+
+.title {
+    font-weight: 600;
+    color: var(--gray-800, #1f2937);
+    font-size: 1.1rem;
+}
+
+.scrollContent {
+    padding: 2rem;
+    padding-bottom: 5rem; /* 底部留白，防止被浏览器边缘遮挡 */
+}
+
+
+.backButton {
+  cursor: pointer;
+  padding-left: 0;
+  color: var(--text-muted);
+}
+
+.backButton:hover {
+  background: transparent;
+  color: var(--text-main);
+}
+
+.backIcon {
+  transition: transform 0.2s;
+}
+
+.backButton:hover .backIcon {
+  transform: translateX(-4px);
+}

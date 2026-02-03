@@ -1,0 +1,111 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #fff; /* 背景可以是纯白 */
+    border-right: 1px solid var(--border-main);
+    width: 150px;
+    flex-shrink: 0;
+    transition: width 0.2s ease;
+}
+
+.header {
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    padding: 0 0.75rem; 
+    border-bottom: 1px solid var(--border-main);
+}
+
+.headerTitle {
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--text-muted); /* 使用语义变量 */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.listArea {
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px; /* 列表项之间加一点微小间距 */
+}
+
+.navItem {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: var(--border-radius);
+    transition: all 0.2s;
+    
+    /* 默认状态 */
+    color: var(--text-muted); 
+    border: 1px solid transparent;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+
+.navItem:hover {
+    background-color: var(--gray-50);
+    color: var(--text-main);
+}
+
+/* 激活状态：改为黑白灰风格，不再使用蓝色 */
+.navItemActive {
+    background-color: var(--gray-100);
+    color: var(--gray-900);
+    font-weight: 600;
+    /* 可选：给激活项加一个微妙的边框，增强对比 */
+    /* border-color: var(--gray-200); */ 
+}
+
+.navIcon {
+    opacity: 0.7;
+    flex-shrink: 0;
+    display: flex; /* 确保图标垂直居中 */
+}
+
+.navItemActive .navIcon {
+    opacity: 1;
+    color: var(--gray-900);
+}
+
+.footer {
+    padding: 0.75rem;
+    border-top: 1px solid var(--border-main);
+    background-color: var(--gray-50); /* 底部稍微灰一点，区分区域 */
+}
+
+.footerLabel {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    padding-left: 0.25rem;
+    font-weight: 500;
+}
+
+.buttonGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+}
+
+/* 虚线按钮专用样式 (配合 btn-secondary 使用) */
+.dashedBtn {
+    border-style: dashed;
+    justify-content: flex-start; /* 图标靠左 */
+    height: 32px; /* 稍微矮一点 */
+    font-size: 0.75rem;
+    background-color: #fff;
+}
+
+.dashedBtn:hover {
+    border-style: dashed;
+    border-color: var(--gray-400);
+}
