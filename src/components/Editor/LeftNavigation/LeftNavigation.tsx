@@ -2,12 +2,10 @@ import {
     User, Briefcase, GraduationCap, Code, 
     FolderGit2, LayoutList, FileText, Plus 
 } from 'lucide-react';
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils"; 
+import * as ScrollArea from '@radix-ui/react-scroll-area'; // 直接使用 Radix
 import type { Resume } from "@/types/resume";
 import styles from "./LeftNavigation.module.css";
 
-// 图标映射逻辑保持不变
 const getIcon = (type: string, id: string) => {
     if (id === 'basic') return <User size={16} />;
     switch (type) {
@@ -39,33 +37,37 @@ export const LeftNavigation = ({
                 <span className={styles.headerTitle}>内容大纲</span>
             </div>
 
-            <ScrollArea className="flex-1">
-                <div className={styles.listArea}>
-                    {resume.sectionOrder.map((section) => (
-                        <button
-                            key={section.id}
-                            onClick={() => onSelect(section.id)}
-                            className={cn(
-                                styles.navItem,
-                                activeSectionId === section.id && styles.navItemActive
-                            )}
-                            type="button"
-                        >
-                            <span className={styles.navIcon}>
-                                {getIcon(section.type, section.id)}
-                            </span>
-                            <span className="truncate">{section.title}</span>
-                        </button>
-                    ))}
-                </div>
-            </ScrollArea>
+            {/* Radix ScrollArea */}
+            <ScrollArea.Root className={styles.scrollRoot}>
+                <ScrollArea.Viewport className={styles.scrollViewport}>
+                    <div className={styles.listArea}>
+                        {resume.sectionOrder.map((section) => (
+                            <button
+                                key={section.id}
+                                onClick={() => onSelect(section.id)}
+                                className={`
+                                    ${styles.navItem} 
+                                    ${activeSectionId === section.id ? styles.navItemActive : ''}
+                                `}
+                                type="button"
+                            >
+                                <span className={styles.navIcon}>
+                                    {getIcon(section.type, section.id)}
+                                </span>
+                                {/* 这里的 truncate 已被 CSS 类替代 */}
+                                <span className={styles.textTruncate}>{section.title}</span>
+                            </button>
+                        ))}
+                    </div>
+                </ScrollArea.Viewport>
+                <ScrollArea.Scrollbar orientation="vertical" className={styles.scrollbar}>
+                    <ScrollArea.Thumb className={styles.thumb} />
+                </ScrollArea.Scrollbar>
+            </ScrollArea.Root>
 
             <div className={styles.footer}>
                 <p className={styles.footerLabel}>添加新模块</p>
                 <div className={styles.buttonGrid}>
-                    {/* 规范：使用 btn-secondary 配合 module.css 中的 dashedBtn 
-                        替代了原本的 <Button> 组件和 Tailwind 堆砌
-                    */}
                     <button 
                         className={`btn-secondary ${styles.dashedBtn}`}
                         onClick={() => onAddSection('自定义列表', 'custom-list')}

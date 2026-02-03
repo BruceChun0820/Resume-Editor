@@ -1,0 +1,61 @@
+/* src/components/Dashboard/CreateCard/CreateCard.module.css */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 250px;
+  cursor: pointer;
+  
+  /* 还原 bg-slate-50/50 的效果，使用极淡的灰色 */
+  background-color: var(--gray-50); 
+  /* 还原 border-2 border-dashed border-slate-200 */
+  border: 2px dashed var(--border-main);
+  border-radius: var(--border-radius);
+  
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  background-color: var(--gray-100);
+  border-color: var(--gray-300); /* 悬停时边框稍微加深 */
+}
+
+.iconWrapper {
+  width: 3.5rem; /* w-14 */
+  height: 3.5rem; /* h-14 */
+  border-radius: 50%;
+  background-color: #fff; /* 这里用纯白突出图标 */
+  border: 1px solid var(--gray-100);
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  
+  color: var(--gray-400); /* text-slate-400 */
+  transition: transform 0.2s, color 0.2s;
+}
+
+/* Group hover 效果：当卡片悬停时，图标放大并变深 */
+.card:hover .iconWrapper {
+  transform: scale(1.1);
+  color: var(--gray-600); /* group-hover:text-slate-600 */
+}
+
+.title {
+  font-weight: 600;
+  color: var(--text-muted); /* 稍微深一点的灰色，不用纯黑 */
+  margin-bottom: 0.25rem;
+}
+
+.card:hover .title {
+  color: var(--text-main);
+}
+
+.description {
+  font-size: 0.75rem; /* text-xs */
+  color: var(--text-muted);
+  opacity: 0.8;
+}

@@ -1,9 +1,7 @@
 // src/components/Editor/SectionEditor/TextSectionEditor.tsx
 import { Trash2 } from 'lucide-react';
-import styles from './SectionEditor.module.css'; // 复用 SectionEditor 的样式
+import styles from './SectionEditor.module.css';
 import { RichEditor } from '../../Common/TiptapEditor/RichEditor';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 
 interface TextSectionEditorProps {
     title: string;
@@ -25,29 +23,33 @@ export const TextSectionEditor = ({
             <div className={styles.sectionHeader}>
                 <div className={styles.titleGroup}>
                     <label className={styles.label}>板块标题</label>
-                    <Input
+                    <input
+                        type="text"
                         value={title}
                         onChange={(e) => onTitleChange(e.target.value)}
                         className={styles.titleInput}
+                        placeholder="请输入标题"
                     />
                 </div>
-                <Button
-                    variant="ghost"
+                <button
+                    type="button"
                     onClick={onDelete}
-                    className="text-red-500 hover:text-red-700 hover:bg-red-50 h-9 w-9 p-0"
+                    className={styles.deleteActionBtn}
+                    title="删除该模块"
                 >
                     <Trash2 size={18} />
-                </Button>
+                </button>
             </div>
 
             <hr className={styles.divider} />
 
-            {/* 内容：只有一个富文本编辑器 */}
+            {/* 内容：富文本编辑器 */}
             <div className={styles.inputGroup}>
                 <RichEditor
                     content={content || ''}
                     onChange={onContentChange}
-                    onAiPolish={() => alert('AI 润色功能开发中...')} 
+                    // AI 功能暂时保留接口，后续开发
+                    onAiPolish={() => console.log('AI Polish triggered')} 
                 />
             </div>
         </div>

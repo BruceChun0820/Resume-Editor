@@ -1,18 +1,34 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+/* src/index.css */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  border-style: solid;
+  border-color: var(--border-main);
+}
+
+body {
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  background: transparent;
+}
 
 /* =========================================
-   1. 基础配置与 CSS 变量
+   2. 核心变量定义 (Design Tokens)
    ========================================= */
-@custom-variant dark (&:is(.dark *));
-
 :root {
-  /* --- 字体与基础设置 --- */
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  /* --- 你的核心灰色系 (Grayscale Palette) --- */
+  /* --- 灰色系 --- */
   --gray-50: #f9fafb;
   --gray-100: #f3f4f6;
   --gray-200: #e5e7eb;
@@ -22,204 +38,150 @@
   --gray-600: #4b5563;
   --gray-700: #374151;
   --gray-800: #1f2937;
+  --gray-900: #111827;
   --gray-950: #030712;
 
-  /* --- 语义化变量 (App Theme) --- */
+  /* --- 语义变量 --- */
   --bg-app: var(--gray-100);
   --bg-card: #ffffff;
+  --bg-hover: var(--gray-50);
   --border-main: var(--gray-200);
   --text-main: var(--gray-800);
   --text-muted: var(--gray-500);
   --border-radius: 6px;
 
-  /* --- Shadcn UI 必需变量 (映射到你的灰色系，保证一致性) --- */
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 220 13% 18%;      /* 对应 gray-800 */
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 222.2 84% 4.9%;
-  --radius: 0.5rem;
+  /* --- 功能色 --- */
+  --color-primary: var(--gray-900);
+  --color-primary-hover: #000000;
+  --color-primary-foreground: #ffffff;
+
+  --color-success: #10b981;
+  --color-success-hover: #059669;
+  --color-success-bg: #ecfdf5;
+  --color-success-border: #a7f3d0;
+
+  --color-warning: #f59e0b;
+  --color-warning-hover: #d97706;
+  --color-warning-bg: #fffbeb;
+  --color-warning-border: #fde68a;
+
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
+  --color-danger-bg: #fef2f2;
+  --color-danger-border: #fecaca;
+
+  --color-info: #3b82f6;
+  --color-info-hover: #2563eb;
+  --color-info-bg: #eff6ff;
+  --color-info-border: #bfdbfe;
 }
 
 /* =========================================
-   2. Base Layer (基础重置)
+   3. 通用工具类 (Utility Components)
    ========================================= */
-@layer base {
-  * {
-    /* 使用 CSS 变量直接控制边框，避免 @apply border-border 报错 */
-    border-color: var(--border-main); 
-  }
-  body {
-    background-color: var(--bg-app);
-    color: var(--text-main);
-  }
-}
 
-/* =========================================
-   3. Components Layer (自定义组件样式)
-   ========================================= */
-@layer components {
-  .btn-base, 
-  .btn-primary, 
-  .btn-secondary, 
-  .btn-danger {
-    @apply inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-sm font-medium transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50;
-    padding: 0.6em 1.2em;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    border: 1px solid transparent;
-  }
-
-  /* Primary: 黑底白字 */
-  .btn-primary {
-    color: #fff;
-    background-color: var(--gray-800);
-    border-color: var(--gray-800);
-  }
-  .btn-primary:hover {
-    background-color: #000;
-    border-color: #000;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-
-  /* Secondary: 白底灰边 */
-  .btn-secondary {
-    color: var(--gray-600);
-    background-color: #fff;
-    border-color: var(--border-main);
-  }
-  .btn-secondary:hover {
-    border-color: var(--gray-400);
-    color: var(--gray-800);
-    background-color: var(--gray-50);
-  }
-
-  /* Danger: 红字白底 */
-  .btn-danger {
-    color: #ef4444; 
-    background-color: #fff;
-    border-color: #fee2e2; 
-  }
-  .btn-danger:hover {
-    background-color: #fef2f2;
-    border-color: #fca5a5;
-    color: #dc2626;
-  }
-
-  .rich-text-content {
-    /* 1. 恢复无序列表圆点 */
-    & ul {
-      list-style-type: disc !important;
-      padding-left: 1.5rem !important; /* 增加缩进 */
-      margin: 0.5rem 0 !important;
-    }
-
-    /* 2. 恢复有序列表数字 */
-    & ol {
-      list-style-type: decimal !important;
-      padding-left: 1.5rem !important;
-      margin: 0.5rem 0 !important;
-    }
-
-    /* 3. 恢复列表项样式 */
-    & li {
-      display: list-item !important; /* 强制作为列表项渲染 */
-      margin-bottom: 0.25rem !important;
-      padding-left: 0.25rem !important;
-    }
-
-    /* 4. 恢复斜体和加粗 */
-    & em, & i {
-      font-style: italic !important;
-    }
-    & strong, & b {
-      font-weight: 700 !important;
-    }
-    
-    /* 5. 段落间距微调 */
-    & p {
-      margin-bottom: 0.4rem;
-      line-height: 1.6;
-    }
-  }
-}
-/* =========================================
-   4. 打印样式
-   ========================================= */
-@media print {
-  aside, .sidebar, button, .dropdownWrapper, ::-webkit-scrollbar {
-    display: none !important;
-  }
-  .app-container {
-    display: block !important;
-    height: auto !important;
-    overflow: visible !important;
-  }
-  .preview-container {
-    display: block !important;
-    position: static !important;
-    width: 100% !important;
-    height: auto !important;
-    overflow: visible !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    background: none !important;
-  }
-  html, body, #root {
-    height: auto !important;
-    overflow: visible !important;
-    background-color: white !important;
-    margin: 0 !important;
-  }
-  @page {
-    size: A4;
-    margin: 15mm;
-  }
-}
-
-/* --- 输入框 --- */
+/* --- 输入框标准化 --- */
 .input-base {
-  @apply flex w-full border bg-white text-sm transition-all;
-  /* 🔥 新增：强制禁用 Shadcn 默认的聚焦光环 */
-  @apply focus-visible:ring-0 focus-visible:ring-offset-0;
-  
-  padding: 10px 12px;
-  border-color: var(--border-main);
+  display: flex;
+  width: 100%;
+  /* 关键：固定高度，与按钮对齐 */
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  /* 上下 padding 交由 flex 居中处理 */
+  align-items: center;
+
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
   border-radius: var(--border-radius);
   color: var(--text-main);
-  
-  /* 解决 Shadcn 可能带来的高度锁定问题，保持你习惯的内边距 */
-  height: auto; 
+  font-size: 0.875rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .input-base:hover {
-  border-color: var(--gray-400); /* 恢复悬停变深灰 */
+  border-color: var(--gray-400);
 }
 
-.input-base:focus-visible {
+.input-base:focus {
   outline: none;
-  border-color: var(--gray-600); /* 聚焦边框变深 */
-  /* 恢复你喜欢的轻微阴影，而不是 Shadcn 的大黑圈 */
-  box-shadow: 0 0 0 3px rgba(55, 65, 81, 0.1); 
-  background-color: #fff;
+  border-color: var(--gray-600);
+  box-shadow: 0 0 0 3px rgba(55, 65, 81, 0.1);
 }
 
 .input-base::placeholder {
   color: var(--gray-300);
 }
 
+/* --- 按钮基础类 --- */
+/* 这里我们不使用 @apply 或 composes，直接定义通用样式 */
+.btn-base,
+.btn-secondary,
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  font-weight: 500;
 
+  /* 关键：固定高度 */
+  height: 2.25rem;
+  padding: 0 1rem;
+
+  transition: all 0.2s;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  border: 1px solid transparent;
+  user-select: none;
+}
+
+/* Secondary: 白底灰边 */
+.btn-secondary {
+  background-color: var(--bg-card);
+  border-color: var(--border-main);
+  color: var(--text-main);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--gray-400);
+}
+
+/* Primary: 黑底白字 */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 打印样式 */
+@media print {
+
+  aside,
+  .sidebar,
+  button,
+  .header-area {
+    display: none !important;
+  }
+
+  .app-container {
+    display: block !important;
+    height: auto !important;
+  }
+
+  .preview-panel {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+}

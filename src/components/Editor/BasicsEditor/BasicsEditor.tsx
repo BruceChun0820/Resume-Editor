@@ -3,6 +3,7 @@ import styles from "./BasicsEditor.module.css";
 import type { BasicInfoData, BasicInfoItem } from "@/types/resume";
 import { useBasicsEditor } from "./useBasicsEditor";
 
+// 属性定义保持不变
 interface BasicsEditorProps {
     data: BasicInfoData;
     items: BasicInfoItem[];
@@ -65,7 +66,6 @@ export const BasicsEditor = ({
                     <div className={styles.grid}>
                         <div className={styles.inputGroup}>
                             <label className={styles.fieldLabel}>姓名</label>
-                            {/* 规范：使用 input-base 类，移除 bg-white */}
                             <input
                                 type="text"
                                 value={data.name || ''}
@@ -121,7 +121,7 @@ export const BasicsEditor = ({
 
                     <button 
                         type="button"
-                        className={`btn-secondary ${styles.addBtn}`}
+                        className={`btn-secondary ${styles.addButton}`}
                         onClick={addItem}
                     >
                         <Plus size={14} /> 

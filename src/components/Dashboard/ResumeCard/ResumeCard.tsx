@@ -1,13 +1,5 @@
 import { FileText, MoreVertical, Copy, Edit, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu"; // 使用 Radix 原语
 import Styles from "./ResumeCard.module.css";
 import type { ResumeItem } from "@/hooks/useDashboard/useDashboard";
 
@@ -21,24 +13,31 @@ interface ResumeCardProps {
 export function ResumeCard({ resume, onEdit, onDelete, onDuplicate }: ResumeCardProps) {
     return (
         <div className={Styles.resumeCard}>
-            {/* A. 右上角更多菜单 */}
-            <div className="absolute top-2 right-2 z-10">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full">
+            {/* A. 右上角更多菜单 (Radix UI) */}
+            <div className="absolute top-0 right-0 z-10">
+                <DropdownMenu.Root>
+                    <DropdownMenu.Trigger asChild>
+                        <button className={Styles.menuBtn} type="button">
                             <MoreVertical size={16} />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-40">
-                        <DropdownMenuItem onClick={() => onDuplicate(resume)}>
-                            <Copy size={14} className="mr-2" /> 创建副本
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                        </button>
+                    </DropdownMenu.Trigger>
+                    
+                    <DropdownMenu.Portal>
+                        <DropdownMenu.Content className={Styles.dropdownContent} align="end" sideOffset={5}>
+                            <DropdownMenu.Item 
+                                className={Styles.dropdownItem} 
+                                onClick={() => onDuplicate(resume)}
+                            >
+                                <Copy size={14} className="mr-2" /> 
+                                创建副本
+                            </DropdownMenu.Item>
+                            {/* 如果有更多选项可以在此添加 */}
+                        </DropdownMenu.Content>
+                    </DropdownMenu.Portal>
+                </DropdownMenu.Root>
             </div>
 
-            {/* B. 卡片主体 (点击进入编辑) - 关键是 Styles.cardMain 的居中控制 */}
+            {/* B. 卡片主体 */}
             <div className={Styles.cardMain} onClick={() => onEdit(resume.id)}>
                 <div className={Styles.iconCircle}>
                     <FileText size={28} />
@@ -51,26 +50,26 @@ export function ResumeCard({ resume, onEdit, onDelete, onDuplicate }: ResumeCard
                 </p>
             </div>
 
-            {/* C. 底部按钮组 (编辑 / 删除) */}
+            {/* C. 底部按钮组 */}
             <div className={Styles.cardActions}>
-                <Button
-                    variant="ghost"
+                <button
                     className={Styles.actionBtn}
                     onClick={() => onEdit(resume.id)}
+                    type="button"
                 >
-                    <Edit size={14} className="mr-2" /> 编辑
-                </Button>
+                    <Edit size={14} /> 编辑
+                </button>
 
-                {/* 右侧边框分隔线 - 依赖父级 relative 定位 */}
-                <div className="absolute bottom-[0.75rem] left-1/2 w-[1px] h-[1.25rem] bg-slate-100 -translate-x-1/2 pointer-events-none" />
+                {/* 分割线 */}
+                <div className={Styles.separator} />
 
-                <Button
-                    variant="ghost"
-                    className={cn(Styles.actionBtn, Styles.deleteBtn)}
+                <button
+                    className={`${Styles.actionBtn} ${Styles.deleteBtn}`}
                     onClick={() => onDelete(resume.id)}
+                    type="button"
                 >
-                    <Trash2 size={14} className="mr-2" /> 删除
-                </Button>
+                    <Trash2 size={14} /> 删除
+                </button>
             </div>
         </div>
     );

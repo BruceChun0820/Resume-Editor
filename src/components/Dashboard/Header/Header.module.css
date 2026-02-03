@@ -1,62 +1,164 @@
+/* src/components/Dashboard/Header/Header.module.css */
+
 .header {
   height: 4rem;
-  border-bottom: 1px solid #e2e8f0;
-  background-color: white;
+  border-bottom: 1px solid var(--border-main);
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
-  /* 【关键修改 1】两端对齐：标题在左，操作区自动被推到最右 */
-  justify-content: space-between; 
+  justify-content: space-between;
   padding: 0 2rem;
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
 
-/* 操作区容器 */
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
 .actionsContainer {
   display: flex;
   align-items: center;
-  gap: 1rem; /* 搜索框和按钮之间的间距 */
+  gap: 12px;
+  height: 100%;
 }
 
-/* 搜索框外层容器 */
+/* --- 搜索框 --- */
 .searchWrapper {
   position: relative;
-  /* 宽度交由 Input 组件控制 */
   display: flex; 
   align-items: center;
+  width: 260px;
 }
 
-/* 图标定位 */
 .searchIcon {
   position: absolute;
-  left: 0.75rem; /* 距离左边缘 12px */
+  left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  height: 1rem;
-  width: 1rem;
-  color: #94a3b8;
-  z-index: 10;
+  color: var(--text-muted);
   pointer-events: none;
+  width: 1rem;
+  height: 1rem;
 }
 
-/* 按钮内文字截断 */
-.folderName {
-  max-width: 120px;
+.searchInput {
+  /* 覆盖 input-base 的默认 padding，给图标留位置 */
+  padding-left: 2.5rem !important; 
+  background-color: var(--bg-app); 
+}
+.searchInput:focus {
+  background-color: #fff;
+}
+
+/* --- 同步按钮 --- */
+.syncBtn {
+  width: 180px; /* 稍微调窄一点，更精致 */
+  position: relative;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: 600;
+  transition: all 0.3s ease;
+  padding: 0; /* 内部布局由 flex 控制 */
 }
 
-.syncButton { 
+/* 已连接状态 */
+.syncBtnConnected {
+  background-color: var(--color-success-bg);
+  border-color: var(--color-success-border);
+  color: var(--gray-700);
+}
+
+/* 悬停时的警告状态 */
+.syncBtnConnected:hover {
+  background-color: var(--color-danger-bg);
+  border-color: var(--color-danger-border);
+}
+
+/* --- 图层动画 --- */
+.layerInfo {
   display: flex;
   align-items: center;
-  gap: 6px; 
-  border-color: #e2e8f0; 
-  color: #475569; 
+  justify-content: center; /* 居中显示 */
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  padding: 0 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.syncButtonActive {
-  background-color: #ecfdf5 !important;
-  border-color: #6ee7b7 !important;
-  color: #059669 !important;
+.layerDisconnect {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--color-danger);
+  font-weight: 500;
+  
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: var(--color-danger-bg); /* 确保背景覆盖 */
+}
+
+/* 悬停切换 */
+.syncBtnConnected:hover .layerInfo {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+.syncBtnConnected:hover .layerDisconnect {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 文本排版 */
+.folderInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+  max-width: 90px; /* 限制宽度以触发省略号 */
+}
+
+.folderLabel {
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.folderName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+/* 旋转动画 */
+.spinIcon {
+  animation: spin 3s linear infinite;
+  margin-left: auto; /* 推到最右侧 */
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.importBtn {
+  color: var(--text-muted);
+}
+.importBtn:hover {
+  color: var(--text-main);
 }

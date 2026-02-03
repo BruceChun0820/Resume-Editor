@@ -1,27 +1,14 @@
 /* src/components/Editor/SectionEditor/SectionEditor.module.css */
 
-/* --- 外部容器：彻底去边框化 --- */
+/* --- 外部容器 --- */
 .container {
-  border: none;
-  background: transparent;
-  box-shadow: none;
-  border-radius: 0;
-  padding: 0;
-  margin: 0;
-
-  /* 布局调整 */
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 24px; /* 标题区和列表区之间的间距 */
+  gap: 24px;
 }
 
-/* 移除 hover 效果，因为不再是卡片了 */
-.container:hover {
-  box-shadow: none;
-}
-
-/* --- 头部 --- */
+/* --- 头部区域 --- */
 .sectionHeader {
   display: flex;
   justify-content: space-between;
@@ -31,6 +18,8 @@
 
 .titleGroup {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .label {
@@ -43,34 +32,56 @@
   letter-spacing: 0.5px;
 }
 
-/* 标题输入框：保持下划线风格，视觉重心 */
+/* 标题输入框：大号、无边框风格 */
 .titleInput {
   width: 100%;
   font-family: inherit;
-  font-size: 24px; /* 加大字号，让它看起来像页面主标题 */
+  font-size: 24px; 
   font-weight: 700;
   color: var(--text-main);
-  background: transparent !important;
-  border: none !important;
-  border-bottom: 2px solid transparent !important; /* 默认隐藏下划线，聚焦显示 */
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  outline: none !important;
-  padding: 4px 0 !important;
-  height: auto !important;
+  background: transparent;
+  
+  /* 只有底部边框 */
+  border: none;
+  border-bottom: 2px solid transparent; 
+  border-radius: 0;
+  outline: none;
+  padding: 4px 0;
   transition: border-color 0.2s;
 }
 
 .titleInput:focus {
-  border-bottom-color: var(--text-main) !important;
+  border-bottom-color: var(--text-main);
 }
 
-.titleInput:hover {
-  border-bottom-color: var(--gray-200) !important;
+.titleInput:hover:not(:focus) {
+  border-bottom-color: var(--border-main);
+}
+
+/* 顶部的大删除按钮 */
+.deleteActionBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--border-radius);
+    color: var(--color-danger);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.deleteActionBtn:hover {
+    background-color: var(--color-danger-bg);
+    color: var(--color-danger-hover);
 }
 
 .divider {
-  display: none; /* 移除分割线，让界面更干净 */
+  border: none;
+  border-top: 1px solid var(--border-main);
+  margin: 0;
 }
 
 /* --- 列表区域 --- */
@@ -80,14 +91,13 @@
   gap: 16px;
 }
 
-/* 单个列表项：保持卡片样式，这是区分 Item 的关键 */
+/* 单个列表项卡片 */
 .listItemCard {
-  background: white; /* 确保是白底，突出内容 */
+  background: var(--bg-card);
   padding: 24px;
   border-radius: 12px;
-  border: 1px solid var(--border-main); /* 这里的边框要保留 */
+  border: 1px solid var(--border-main);
   transition: all 0.2s ease;
-  position: relative;
 }
 
 .listItemCard:hover {
@@ -111,6 +121,26 @@
   border-radius: 4px;
 }
 
+/* 卡片内的删除按钮 */
+.itemDeleteBtn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    color: var(--gray-400); /* 默认浅色 */
+    background: transparent;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.itemDeleteBtn:hover {
+    color: var(--color-danger);
+    background-color: var(--color-danger-bg);
+}
+
 /* --- 输入框网格 --- */
 .inputGrid {
   display: grid;
@@ -119,7 +149,8 @@
   margin-bottom: 20px;
 }
 
-@media (max-width: 640px) {
+/* 响应式：小屏变单列 */
+@container formArea (max-width: 500px) {
   .inputGrid {
     grid-template-columns: 1fr;
   }
@@ -134,10 +165,10 @@
 .fieldLabel {
   font-size: 13px;
   font-weight: 500;
-  color: var(--gray-700);
+  color: var(--text-muted);
 }
 
-/* --- 添加按钮 --- */
+/* --- 添加按钮 (虚线) --- */
 .addButton {
   width: 100%;
   padding: 14px;

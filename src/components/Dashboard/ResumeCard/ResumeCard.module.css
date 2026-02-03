@@ -1,8 +1,10 @@
+/* src/components/Dashboard/ResumeCard/ResumeCard.module.css */
+
 .resumeCard {
   position: relative;
-  background-color: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: var(--border-radius);
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
@@ -12,11 +14,37 @@
 }
 
 .resumeCard:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  border-color: var(--gray-300);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
 }
 
+/* --- 右上角菜单按钮 --- */
+.menuBtn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 10;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.menuBtn:hover, .menuBtn[data-state="open"] {
+  color: var(--text-main);
+  background-color: var(--gray-100);
+}
+
+/* --- 卡片主体 --- */
 .cardMain {
   flex: 1;
   display: flex;
@@ -26,71 +54,116 @@
   padding: 1.5rem;
   text-align: center;
   cursor: pointer;
+  width: 100%;
 }
 
 .iconCircle {
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 50%;
-  background-color: #f1f5f9;
-  color: #475569;
+  background-color: var(--gray-100);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1rem;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 }
 
 .resumeCard:hover .iconCircle {
-  background-color: #e2e8f0;
-  color: #0f172a;
+  background-color: var(--gray-200);
+  color: var(--text-main);
 }
 
 .cardTitle {
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text-main);
   margin-bottom: 0.25rem;
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 1rem;
 }
 
 .cardDate {
   font-size: 0.75rem;
-  color: #94a3b8;
-  font-family: monospace;
+  color: var(--text-muted);
+  font-family: monospace; /* 保持数字等宽 */
 }
 
+/* --- 底部操作栏 --- */
 .cardActions {
-  position: relative; /* 必须为 relative 才能支撑分隔线的 absolute 定位 */
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--gray-100);
+}
+
+/* 中间分割线 */
+.separator {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  width: 1px;
+  height: 1.25rem;
+  background-color: var(--gray-200);
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 .actionBtn {
-  display: flex !important; /* 确保图标文字水平排列 */
-  align-items: center !important;
-  justify-content: center !important;
-  border-radius: 0 !important;
-  height: 2.75rem !important;
-  font-size: 0.875rem !important;
-  border: none !important;
-  background-color: transparent !important;
-  color: #475569 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.75rem;
+  font-size: 0.875rem;
+  border: none;
+  background-color: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .actionBtn:hover {
-  background-color: #f8fafc !important;
-  color: #0f172a !important;
-}
-
-.deleteBtn {
-  color: #ef4444 !important;
+  background-color: var(--gray-50);
+  color: var(--text-main);
 }
 
 .deleteBtn:hover {
-  background-color: #fef2f2 !important;
-  color: #b91c1c !important;
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+/* --- Dropdown 样式 (Radix) --- */
+.dropdownContent {
+  min-width: 160px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-main);
+  z-index: 50;
+  animation: slideDown 0.1s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  color: var(--text-main);
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+}
+
+.dropdownItem:hover, .dropdownItem:focus {
+  background-color: var(--gray-100);
 }

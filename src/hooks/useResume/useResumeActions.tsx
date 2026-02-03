@@ -48,7 +48,6 @@ export const useResumeActions = (
             }
             const base64 = await fileToBase64(file);
 
-            // 🔥 适配新架构：通过 partial update 更新 avatar 字段
             updateBasicData({ avatar: base64 });
 
         } catch (error: any) {
