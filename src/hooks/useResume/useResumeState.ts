@@ -112,6 +112,16 @@ export const useResumeState = (resumeId: string) => {
         }));
     };
 
+    const renameSection = (sectionId: string, newTitle: string) => {
+        setResumeWithTime(prev => ({
+            ...prev,
+            // 遍历 sectionOrder，找到对应 ID 的模块并更新 title
+            sectionOrder: prev.sectionOrder.map(sec => 
+                sec.id === sectionId ? { ...sec, title: newTitle } : sec
+            )
+        }));
+    };
+
     return {
         resume,
         actions: {
@@ -126,7 +136,8 @@ export const useResumeState = (resumeId: string) => {
             renameResume: (name: string) => setResumeWithTime(prev => ({ ...prev, name })),
             resetResume: () => {
                 if(window.confirm("确定重置？")) setResume({ ...initialResume, id: resumeId, updatedAt: new Date().toISOString() });
-            }
+            },
+            renameSection
         }
     };
 };

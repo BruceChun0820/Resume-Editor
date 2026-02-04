@@ -1,3 +1,5 @@
+/* src/components/Editor/FormArea/FormArea.module.css */
+
 .container {
     display: flex;
     flex-direction: column;
@@ -20,19 +22,78 @@
     height: 3.5rem;
     display: flex;
     align-items: center;
+    justify-content: space-between; 
     padding: 0 1.5rem;
     border-bottom: 1px solid var(--border-main);
     background-color: var(--bg-card);
     z-index: 20;
 }
 
-/* 替代 flex-1 min-h-0 w-full */
+/* --- 右侧操作区布局 --- */
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* 按钮之间的间距 */
+}
+
+/* --- 新增：Dropdown Menu 样式 (Radix UI) --- */
+.dropdownContent {
+    min-width: 140px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-main);
+    border-radius: var(--border-radius);
+    padding: 4px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    z-index: 50;
+    animation: slideDownAndFade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dropdownItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-main);
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.15s;
+    user-select: none;
+}
+
+/* Radix 选中/高亮状态 */
+.dropdownItem:focus,
+.dropdownItem:hover,
+.dropdownItem[data-highlighted] {
+    background-color: var(--bg-hover);
+    color: var(--text-main);
+}
+
+.iconMuted {
+    opacity: 0.5;
+}
+
+/* 简单的下拉动画 */
+@keyframes slideDownAndFade {
+    from {
+        opacity: 0;
+        transform: translateY(-2px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- 原有样式保持不变 --- */
+
 .scrollRoot {
     flex: 1;
     min-height: 0;
     width: 100%;
     overflow: hidden;
-    background-color: white;
+    background-color: white; /* 也可以改为 var(--bg-app) 增加层次感 */
 }
 
 .scrollViewport {
@@ -41,7 +102,6 @@
     border-radius: inherit;
 }
 
-/* Scrollbar 样式同上 */
 .scrollbar {
     display: flex;
     user-select: none;
@@ -73,39 +133,58 @@
     padding-bottom: 5rem;
 }
 
-.backButton {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    padding: 0.5rem 0.75rem; /* 增加点击区域 */
-    margin-left: -0.75rem;    /* 视觉补偿，让图标靠左对齐 */
-    background: transparent;
-    border: none;
-    border-radius: var(--border-radius);
-    
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    transition: all 0.2s;
-}
 
-.backButton:hover {
-    color: var(--text-main);
-    background-color: var(--gray-50); /* 加个轻微背景 */
-}
-
-.backIcon {
-    transition: transform 0.2s;
-}
-
-.backButton:hover .backIcon {
-    transform: translateX(-4px);
-}
 
 .emptyState {
     color: var(--text-muted);
     padding: 2rem;
     text-align: center;
     margin-top: 2.5rem;
+}
+
+/* --- 简历标题输入框 --- */
+/* 设计意图：默认看起来像标题文本，Hover/Focus 时显形，提供编辑暗示 */
+.titleInput {
+    font-family: inherit;
+    /* 协调调整：SectionTitle 是 24px，这里Header区域较小，用 18px 更精致 */
+    font-size: 1.125rem; 
+    font-weight: 600;     /* 保持粗体，体现标题感 */
+    color: var(--text-main);
+    
+    background: transparent;
+    width: 320px;         /* 给足够的宽度 */
+    
+    /* 核心风格复刻：只留底部边框 */
+    border: none;
+    border-bottom: 2px solid transparent; /* 默认隐形 */
+    border-radius: 0;     /* 去除圆角 */
+    outline: none;
+    
+    /* 布局微调 */
+    padding: 4px 0;       /* 上下留白 */
+    margin-right: auto;   /* 确保它在左侧，和右边按钮分开 */
+    
+    /* 丝滑过渡 */
+    transition: border-color 0.2s, color 0.2s;
+    
+    /* 文本溢出处理 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 交互状态：完全一致的逻辑 */
+.titleInput:focus {
+    /* 聚焦时：底部黑线 (或主色) */
+    border-bottom-color: var(--text-main);
+}
+
+.titleInput:hover:not(:focus) {
+    /* 悬停时：底部灰线，提示可编辑 */
+    border-bottom-color: var(--border-main);
+}
+
+.titleInput::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
 }

@@ -2,6 +2,7 @@
 import { Trash2 } from 'lucide-react';
 import styles from './SectionEditor.module.css';
 import { RichEditor } from '../../Common/TiptapEditor/RichEditor';
+import { useCallback } from 'react';
 
 interface TextSectionEditorProps {
     title: string;
@@ -18,6 +19,15 @@ export const TextSectionEditor = ({
     onContentChange,
     onDelete
 }: TextSectionEditorProps) => {
+
+    const handleTitleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        onTitleChange(e.target.value);
+    }, [onTitleChange]);
+
+    const handleContentChange = useCallback((html: string) => {
+    onContentChange(html);
+}, [onContentChange]);
+
     return (
         <div className={styles.container}>
             <div className={styles.sectionHeader}>
@@ -26,7 +36,7 @@ export const TextSectionEditor = ({
                     <input
                         type="text"
                         value={title}
-                        onChange={(e) => onTitleChange(e.target.value)}
+                        onChange={handleTitleChange}
                         className={styles.titleInput}
                         placeholder="请输入标题"
                     />
@@ -47,7 +57,7 @@ export const TextSectionEditor = ({
             <div className={styles.inputGroup}>
                 <RichEditor
                     content={content || ''}
-                    onChange={onContentChange}
+                    onChange={handleContentChange}
                     // AI 功能暂时保留接口，后续开发
                     onAiPolish={() => console.log('AI Polish triggered')} 
                 />

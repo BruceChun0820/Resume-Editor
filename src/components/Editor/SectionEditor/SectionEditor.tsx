@@ -86,7 +86,6 @@ export const SectionEditor = ({
                                         value={(item[cfg.key] as string) || ''}
                                         placeholder={cfg.placeholder}
                                         onChange={(e) => updateItem(index, cfg.key, e.target.value)}
-                                        /* 使用全局定义的 input-base */
                                         className="input-base" 
                                     />
                                 </div>

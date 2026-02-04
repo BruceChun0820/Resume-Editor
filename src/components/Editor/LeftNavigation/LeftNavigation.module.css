@@ -15,6 +15,7 @@
     align-items: center;
     padding: 0 0.75rem; 
     border-bottom: 1px solid var(--border-main);
+    justify-content: center;
 }
 
 .headerTitle {
@@ -149,4 +150,34 @@
 .dashedBtn:hover {
     border-style: dashed;
     border-color: var(--gray-400);
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 0.5rem 0.75rem; 
+    margin-left: -0.75rem;    
+    background: transparent;
+    border: none;
+    border-radius: var(--border-radius);
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-main);
+    transition: all 0.2s;
+}
+
+.backButton:hover {
+    color: var(--text-main);
+    background-color: var(--gray-50); 
+}
+
+.backIcon {
+    transition: transform 0.2s;
+}
+
+.backButton:hover .backIcon {
+    transform: translateX(-4px);
 }

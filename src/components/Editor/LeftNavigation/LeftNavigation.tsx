@@ -1,10 +1,12 @@
 import { 
     User, Briefcase, GraduationCap, Code, 
-    FolderGit2, LayoutList, FileText, Plus 
+    FolderGit2, LayoutList, FileText, Plus, 
+    ArrowLeft
 } from 'lucide-react';
 import * as ScrollArea from '@radix-ui/react-scroll-area'; // 直接使用 Radix
 import type { Resume } from "@/types/resume";
 import styles from "./LeftNavigation.module.css";
+import { useNavigate } from 'react-router-dom';
 
 const getIcon = (type: string, id: string) => {
     if (id === 'basic') return <User size={16} />;
@@ -31,10 +33,18 @@ export const LeftNavigation = ({
     onSelect,
     onAddSection
 }: LeftNavigationProps) => {
+    const navigate = useNavigate();
     return (
         <aside className={styles.sidebar}>
             <div className={styles.header}>
-                <span className={styles.headerTitle}>内容大纲</span>
+                <button
+                    className={styles.backButton}
+                    onClick={() => navigate('/')}
+                    type="button"
+                >
+                    <ArrowLeft size={16} className={styles.backIcon}/>
+                    <span>返回仪表盘</span>
+                </button>
             </div>
 
             {/* Radix ScrollArea */}
