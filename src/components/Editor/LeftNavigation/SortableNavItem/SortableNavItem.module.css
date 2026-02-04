@@ -1,0 +1,172 @@
+/* src/components/Editor/LeftNavigation/SortableNavItem/SortableNavItem.module.css */
+
+/* --- 容器基础样式 --- */
+.container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    padding: 0 4px;
+    
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--border-radius);
+    transition: all 0.2s ease;
+    user-select: none;
+    position: relative;
+    
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+/* 选中状态 */
+.active {
+    background-color: var(--bg-card);
+    border-color: var(--border-main);
+    color: var(--color-primary);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* 悬停状态 */
+.container:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-main);
+}
+
+/* --- 区域 1: 左侧操作区 (显隐按钮) --- */
+.actionArea {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 100%;
+    margin-right: 4px;
+    
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+/* Hover、选中、或处于隐藏状态时显示 */
+.container:hover .actionArea,
+.active .actionArea,
+.actionArea.isHidden {
+    opacity: 1;
+}
+
+.iconBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+    background: transparent;
+}
+
+.iconBtn:hover {
+    background-color: var(--gray-200);
+    color: var(--text-main);
+}
+
+/* --- 区域 2: 中间内容区 --- */
+.contentArea {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 100%;
+    padding-left: 4px;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    color: var(--text-muted);
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.active .icon,
+.container:hover .icon {
+    opacity: 1;
+    color: inherit;
+}
+
+.text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- 区域 3: 右侧拖拽手柄 --- */
+.dragHandle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 100%;
+    margin-left: 4px;
+    
+    cursor: grab;
+    color: var(--gray-400);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.container:hover .dragHandle,
+.active .dragHandle {
+    opacity: 1;
+}
+
+.dragHandle:hover {
+    color: var(--text-main);
+}
+
+.dragHandle:active {
+    cursor: grabbing;
+}
+
+/* --- Dnd 状态样式 --- */
+
+/* 幽灵态：原位置变淡 */
+.isDragging {
+    opacity: 0.4;
+    background: var(--gray-100);
+    border: 1px dashed var(--gray-300);
+}
+.isDragging * {
+    opacity: 0 !important;
+}
+
+/* 浮层态：跟随鼠标 */
+.overlay {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    padding: 0 4px;
+    
+    background-color: var(--bg-card);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--border-radius);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    cursor: grabbing;
+}
+
+/* 强制显示 Overlay 内部元素 */
+.overlay .dragHandle,
+.overlay .actionArea,
+.overlay .icon {
+    opacity: 1;
+}

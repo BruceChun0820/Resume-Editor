@@ -43,6 +43,8 @@ export default function Editor() {
         activeSectionId={activeSectionId}
         onSelect={setActiveSectionId}
         onAddSection={handleAddSection}
+        onReorder={actions.reorderSections}
+        onToggleVisibility={actions.toggleSectionVisibility}
       />
 
       <FormArea 

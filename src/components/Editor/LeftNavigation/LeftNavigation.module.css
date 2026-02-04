@@ -1,10 +1,12 @@
+/* src/components/Editor/LeftNavigation/LeftNavigation.module.css */
+
 .sidebar {
     display: flex;
     flex-direction: column;
     height: 100%;
     background-color: #fff;
     border-right: 1px solid var(--border-main);
-    width: 150px;
+    width: 240px; 
     flex-shrink: 0;
     transition: width 0.2s ease;
 }
@@ -18,15 +20,38 @@
     justify-content: center;
 }
 
-.headerTitle {
-    font-weight: 600;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+.backButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 8px;
+    cursor: pointer;
+    padding: 0.5rem 0.75rem; 
+    margin-left: 0;
+    background: transparent;
+    border: none;
+    border-radius: var(--border-radius);
+    
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-main);
+    transition: all 0.2s;
 }
 
-/* 替代 flex-1 和 ScrollArea 容器 */
+.backButton:hover {
+    color: var(--text-main);
+    background-color: var(--gray-50); 
+}
+
+.backIcon {
+    transition: transform 0.2s;
+}
+
+.backButton:hover .backIcon {
+    transform: translateX(-4px);
+}
+
 .scrollRoot {
     flex: 1;
     overflow: hidden;
@@ -39,7 +64,6 @@
     border-radius: inherit;
 }
 
-/* Scrollbar 样式 (Radix) */
 .scrollbar {
     display: flex;
     user-select: none;
@@ -47,7 +71,7 @@
     padding: 2px;
     background: transparent;
     transition: background 160ms ease-out;
-    width: 8px; /* 纵向滚动条宽度 */
+    width: 8px; 
 }
 .scrollbar:hover { background: var(--gray-50); }
 
@@ -67,56 +91,10 @@
 }
 
 .listArea {
-    padding: 0.5rem;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-}
-
-.navItem {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.6rem 0.5rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    border-radius: var(--border-radius);
-    transition: all 0.2s;
-    color: var(--text-muted); 
-    border: 1px solid transparent;
-    background: transparent;
-    text-align: left;
-    cursor: pointer;
-}
-
-.navItem:hover {
-    background-color: var(--gray-50);
-    color: var(--text-main);
-}
-
-.navItemActive {
-    background-color: var(--gray-100);
-    color: var(--gray-900);
-    font-weight: 600;
-}
-
-.navIcon {
-    opacity: 0.7;
-    flex-shrink: 0;
-    display: flex;
-}
-
-.navItemActive .navIcon {
-    opacity: 1;
-    color: var(--gray-900);
-}
-
-/* 替代 Tailwind truncate */
-.textTruncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    gap: 6px;
 }
 
 .footer {
@@ -150,34 +128,4 @@
 .dashedBtn:hover {
     border-style: dashed;
     border-color: var(--gray-400);
-}
-
-.backButton {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    padding: 0.5rem 0.75rem; 
-    margin-left: -0.75rem;    
-    background: transparent;
-    border: none;
-    border-radius: var(--border-radius);
-    justify-content: center;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--text-main);
-    transition: all 0.2s;
-}
-
-.backButton:hover {
-    color: var(--text-main);
-    background-color: var(--gray-50); 
-}
-
-.backIcon {
-    transition: transform 0.2s;
-}
-
-.backButton:hover .backIcon {
-    transform: translateX(-4px);
 }

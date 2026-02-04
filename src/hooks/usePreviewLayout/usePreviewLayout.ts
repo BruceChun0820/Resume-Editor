@@ -1,3 +1,4 @@
+// src/hooks/usePreviewLayout/usePreviewLayout.ts
 import { useLayoutEffect, type RefObject } from 'react';
 import type { Resume } from '@/types/resume';
 import styles from '@/components/Preview/ResumePreview.module.css'; // 引用样式用于选择器
