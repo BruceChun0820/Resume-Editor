@@ -1,25 +1,59 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // 记得引入 useEffect
 import type { Resume, ResumeItem, SectionType, BasicInfoData, BasicInfoItem, BasicsSection } from '@/types/resume';
 import { initialResume } from '@/data/initialResume';
 
+// 引入我们刚才准备好的两个工具
+import { isValidResume } from '@/utils/validator';
+import { migrateResume } from '@/utils/migrator';
+
 export const useResumeState = (resumeId: string) => {
-    // 1. 初始化数据 (读取 LocalStorage 仅用于初始状态，后续不再写入)
+    // 1. 初始化数据 (核心修改部分)
     const [resume, setResume] = useState<Resume>(() => {
+        // SSR 环境保护
         if (typeof window === 'undefined') return initialResume;
+
         const saved = localStorage.getItem(`resume-${resumeId}`);
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
-                return { ...initialResume, ...parsed, id: resumeId };
+
+                // --- 检查是否是完美的新格式 ---
+                if (isValidResume(parsed)) {
+                    // 如果数据没问题，直接使用
+                    // 这里的 ...initialResume 只是为了防守缺失的顶级字段，关键是 parsed 结构要是对的
+                    return { ...initialResume, ...parsed, id: resumeId };
+                }
+
+                // --- 数据清洗/迁移 ---
+                console.warn(`[ResumeHook] 检测到旧版或损坏数据 (${resumeId})，正在自动修复...`);
+                const migrated = migrateResume(parsed);
+
+                // --- 检查修复后的结果 ---
+                if (isValidResume(migrated)) {
+                    // 修复成功！立即把修复后的正确数据写回 LocalStorage
+                    // 这样下次刷新就不用再修了
+                    localStorage.setItem(`resume-${resumeId}`, JSON.stringify(migrated));
+                    return { ...migrated, id: resumeId };
+                }
+
             } catch (e) {
-                console.error("Failed to parse resume data", e);
+                console.error("[ResumeHook] 初始化失败，加载默认模版", e);
             }
         }
+
         return { ...initialResume, id: resumeId };
     });
 
+    // 2. 自动保存 (这一步不能少，否则修改了不会存)
+    // 你的原代码里似乎没贴这个，但我强烈建议加上，确保状态变更自动写入 LS
+    useEffect(() => {
+        if (resume && resume.id) {
+            localStorage.setItem(`resume-${resume.id}`, JSON.stringify(resume));
+        }
+    }, [resume]);
+
+
     // --- 辅助函数：更新状态的同时，自动更新 updatedAt ---
-    // 这样避免了在 useEffect 中 setState 导致的死循环
     const setResumeWithTime = (updater: (prev: Resume) => Resume) => {
         setResume(prev => {
             const newState = updater(prev);

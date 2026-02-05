@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useResume } from '@/hooks/useResume/useResume';
 import { ResumePreview } from '@/components/Preview/ResumePreview';
 
@@ -12,7 +11,7 @@ import Styles from './Editor.module.css';
 
 export default function Editor() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const resumeId = id || "default-resume";
 
   // 1. 数据 Hook

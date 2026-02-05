@@ -26,7 +26,7 @@ export const BasicsEditor = ({
         handleItemLabelChange,
         addItem,
         deleteItem
-    } = useBasicsEditor(data, items, onDataChange, onItemsChange);
+    } = useBasicsEditor(items, onDataChange, onItemsChange);
 
     return (
         <div className={styles.container}>

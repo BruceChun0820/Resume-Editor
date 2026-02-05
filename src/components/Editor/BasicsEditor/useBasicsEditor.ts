@@ -4,7 +4,6 @@ import type { BasicInfoData, BasicInfoItem } from '@/types/resume';
 import { fileToBase64 } from '@/utils/imageHelper';
 
 export const useBasicsEditor = (
-    data: BasicInfoData,
     items: BasicInfoItem[],
     onDataChange: (data: Partial<BasicInfoData>) => void,
     onItemsChange: (items: BasicInfoItem[]) => void
