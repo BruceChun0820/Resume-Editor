@@ -1,3 +1,6 @@
+// 为了获取 CSS Modules 编译后的哈希类名
+import styles from '@/components/Preview/ResumePreview.module.css';
+
 export const printResumeContent = (contentId: string, documentTitle: string) => {
   // 1. 获取目标 DOM
   const element = document.getElementById(contentId);
@@ -6,7 +9,7 @@ export const printResumeContent = (contentId: string, documentTitle: string) => 
     return;
   }
 
-  const originalTitle = document.title; // 备份原标题
+  const originalTitle = document.title;
   document.title = documentTitle;
 
   // 2. 创建隐藏的 Iframe
@@ -17,45 +20,44 @@ export const printResumeContent = (contentId: string, documentTitle: string) => 
   iframe.style.border = 'none';
   document.body.appendChild(iframe);
 
-  // 获取 Iframe 的 document 对象
   const doc = iframe.contentWindow?.document;
   if (!doc) return;
-
-  // --- 开始构建 Iframe 内容 (使用 DOM API 替代 document.write) ---
 
   // 3. 设置标题
   doc.title = documentTitle;
 
   // 4. 智能收集并注入当前页面的样式
-  // 我们不仅要收集全局样式，还要收集 CSS Modules 生成的样式
   Array.from(document.styleSheets).forEach((sheet) => {
     try {
       if (sheet.href) {
-        // 外部样式表 (如 CDN 字体)：创建 <link> 标签
         const link = doc.createElement('link');
         link.rel = 'stylesheet';
         link.href = sheet.href;
         doc.head.appendChild(link);
       } else {
-        // 内部样式表 (Style 标签)：创建 <style> 标签
-        // 注意：sheet.cssRules 可能因跨域报错，需要 try-catch
         const rules = Array.from(sheet.cssRules).map((rule) => rule.cssText).join('');
         const style = doc.createElement('style');
         style.textContent = rules;
         doc.head.appendChild(style);
       }
     } catch (e) {
-      console.warn('读取样式表失败 (可能是跨域限制，不影响打印):', e);
+      console.warn('样式读取受限:', e);
     }
   });
 
-  // 5. 注入打印专用重置样式
+  // 获取 CSS Modules 编译后的真实类名
+  // 防止样式文件没加载导致 undefined，做个兜底
+  const pageBreakClass = styles.pageBreakMargin || 'pageBreakMargin';
+  const paperClass = styles.paper || 'paper';
+
   const printStyle = doc.createElement('style');
   printStyle.textContent = `
+    /* A. 设置纸张与基础环境 (核心修改点) */
     @page {
       size: A4;
-      margin: 15mm;
+      margin: 15mm !important; 
     }
+    
     body {
       margin: 0;
       padding: 0;
@@ -65,6 +67,36 @@ export const printResumeContent = (contentId: string, documentTitle: string) => 
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
     }
+
+    /* B. 重置 .paper 容器 */
+    .${paperClass} {
+      margin: 0 !important;
+      padding: 0 !important; 
+      
+      width: 100% !important;
+      height: auto !important;
+      box-shadow: none !important;
+      border: none !important;
+      background: white !important;
+      display: block !important;
+    }
+
+    /* C. 处理分页断点 */
+    .${pageBreakClass} {
+      margin-top: 0 !important; 
+      padding-top: 0 !important;
+      
+      break-before: page !important;
+      page-break-before: always !important;
+      
+      display: block !important;
+      visibility: visible !important;
+    }
+
+    /* D. 辅助优化 */
+    li, p, div {
+      break-inside: auto; 
+    }
     ::-webkit-scrollbar { display: none; }
   `;
   doc.head.appendChild(printStyle);
@@ -73,16 +105,14 @@ export const printResumeContent = (contentId: string, documentTitle: string) => 
   doc.body.innerHTML = element.outerHTML;
 
   // 7. 执行打印
-  // 使用 setTimeout 确保图片和字体加载完成
   setTimeout(() => {
     if (iframe.contentWindow) {
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
     }
-
     setTimeout(() => {
       document.title = originalTitle;
-      document.body.removeChild(iframe); // 建议用完移除
+      document.body.removeChild(iframe);
     }, 100);
   }, 500);
 };
