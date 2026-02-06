@@ -1,4 +1,4 @@
-/* src/components/AI/AIPolishModal.module.css */
+/* src/components/AI/AIPolishModal/AIPolishModal.module.css */
 
 /* 1. 遮罩层 */
 .overlay {
@@ -19,16 +19,16 @@
 
 /* 2. 弹窗主体 */
 .modal {
-    background-color: var(--bg-card); /* 复用全局变量 */
+    background-color: var(--bg-card);
     width: 100%;
     max-width: 900px;
     max-height: 85vh;
-    border-radius: var(--border-radius); /* 复用全局变量 */
+    border-radius: var(--border-radius);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border: 1px solid var(--border-main); /* 复用全局变量 */
+    border: 1px solid var(--border-main);
     animation: zoomIn 0.2s ease-out;
 }
 
@@ -39,7 +39,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--bg-hover); /* 使用 bg-hover (gray-50) */
+    background-color: var(--bg-hover);
 }
 
 .title {
@@ -74,7 +74,7 @@
     flex: 1;
     overflow-y: auto;
     padding: 24px;
-    background-color: var(--gray-50); 
+    background-color: var(--gray-50); /* 整体背景 */
 }
 
 .grid {
@@ -96,61 +96,81 @@
 }
 
 .label {
-    font-size: 0.75rem;
+    font-size: 0.75rem; /* 12px */
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--text-muted);
-}
-
-/* 原文框 */
-.contentBox {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-main);
-    border-radius: var(--border-radius);
-    padding: 16px;
-    min-height: 200px;
-    font-size: 0.875rem;
-    line-height: 1.6;
-    color: var(--text-main);
-}
-
-/* AI 结果框 */
-.aiContentBox {
-    background-color: #fdf4ff; /* 极浅紫，因为没有定义 purple-50，这里保留特例或去 index.css 定义 */
-    border: 1px solid #e9d5ff; /* 同上 */
-    border-radius: var(--border-radius);
-    padding: 16px;
-    min-height: 200px;
-    font-size: 0.875rem;
-    line-height: 1.6;
-    color: var(--gray-900);
+    line-height: 1.5; 
 }
 
 .aiLabel {
-    color: var(--purple-500); /* 使用全局变量 */
+    color: var(--purple-500);
     display: flex;
     justify-content: space-between;
+    width: 100%; 
 }
 
-/* --- HTML 内容复原 (List, Bold) --- */
-.contentBox ul, .aiContentBox ul {
-    list-style-type: disc;
-    padding-left: 1.25rem;
+/* 提取公共样式：确保左右两边结构完全一致 */
+.contentBox,
+.aiContentBox {
+    border-radius: var(--border-radius);
+    padding: 16px;
+    min-height: 200px;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    border-width: 1px;
+    border-style: solid;
+    transition: all 0.2s ease;
+}
+
+/* 左侧：原文框 (灰色系卡片) */
+.contentBox {
+    background-color: var(--gray-50); /* 给原文一个灰色背景，不再是白底 */
+    border-color: var(--border-main);
+    color: var(--text-muted); /* 稍微浅一点，代表“旧内容” */
+}
+
+/* 右侧：AI 结果框 (紫色系卡片) */
+.aiContentBox {
+    background-color: #fdf4ff;
+    border-color: #e9d5ff;
+    color: var(--gray-900); /* 深色字，突出重点 */
+}
+
+/* --- 列表与文字排版 (同时作用于左右两边) --- */
+/* 这段代码解决了“原文没有 bulletpoint”的问题 */
+
+.contentBox ul, 
+.aiContentBox ul {
+    list-style-type: disc; /* 强制显示圆点 */
+    padding-left: 1.25rem; /* 强制左缩进 */
     margin: 0.5rem 0;
 }
 
-.contentBox ol, .aiContentBox ol {
+.contentBox ol, 
+.aiContentBox ol {
     list-style-type: decimal;
     padding-left: 1.25rem;
     margin: 0.5rem 0;
 }
 
-.contentBox p, .aiContentBox p {
+.contentBox li,
+.aiContentBox li {
+    margin-bottom: 0.25rem; /* 增加列表项之间的呼吸感 */
+}
+
+.contentBox p, 
+.aiContentBox p {
     margin-bottom: 0.5rem;
 }
 
-.contentBox strong, .aiContentBox strong {
+.contentBox strong {
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+.aiContentBox strong {
     font-weight: 600;
     color: var(--gray-900);
 }
@@ -198,9 +218,8 @@
 }
 
 .btnAccept {
-    /* 严格使用 index.css 中的 purple-500 和 pink-500 */
     background: linear-gradient(90deg, var(--purple-500) 0%, var(--pink-500) 100%);
-    color: #ffffff; /* 按钮文字白 */
+    color: #ffffff;
     box-shadow: 0 4px 6px -1px rgba(168, 85, 247, 0.2);
 }
 .btnAccept:hover {
@@ -214,4 +233,51 @@
 
 .spin {
     animation: spin 1s linear infinite;
+}
+
+/* --- 骨架屏加载动画 (Fishbone/Skeleton) --- */
+.skeletonContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* 行间距 */
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+}
+
+.skeletonLine {
+    height: 14px; /* 模拟文字高度 */
+    background: #e9d5ff; /* 浅紫色占位符，匹配 AI 主题 */
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 通过宽度变化模拟长短不一的句子 */
+.skeletonLine:nth-child(1) { width: 90%; }
+.skeletonLine:nth-child(2) { width: 95%; }
+.skeletonLine:nth-child(3) { width: 85%; }
+.skeletonLine:nth-child(4) { width: 92%; }
+.skeletonLine:nth-child(5) { width: 60%; }
+
+/* 闪光动画效果 */
+.skeletonLine::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.6) 50%, 
+        transparent 100%
+    );
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }

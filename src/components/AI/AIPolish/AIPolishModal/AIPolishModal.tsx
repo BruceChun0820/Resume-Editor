@@ -1,4 +1,4 @@
-// src/components/AI/AIPolishModal.tsx
+// src/components/AI/AIPolishModal/AIPolishModal.tsx
 import { X, Check, RefreshCw } from 'lucide-react';
 import styles from './AIPolishModal.module.css';
 
@@ -9,7 +9,7 @@ interface AIPolishModalProps {
     polishedText: string;
     onAccept: () => void;
     onRetry: () => void;
-    isRetrying: boolean;
+    isRetrying: boolean; // 这个状态现在控制骨架屏的显示
 }
 
 export const AIPolishModal = ({ 
@@ -32,6 +32,7 @@ export const AIPolishModal = ({
 
                 <div className={styles.body}>
                     <div className={styles.grid}>
+                        {/* 左侧：原文 */}
                         <div className={styles.column}>
                             <span className={styles.label}>Original / 原文</span>
                             <div className={styles.contentBox}>
@@ -39,13 +40,28 @@ export const AIPolishModal = ({
                             </div>
                         </div>
 
+                        {/* 右侧：AI 结果 */}
                         <div className={styles.column}>
-                            <span className={styles.aiLabel}>
-                                AI Polished / 优化后
-                                {isRetrying && <span style={{ fontSize: '12px', opacity: 0.8 }}>重新生成中...</span>}
+                            <span className={`${styles.label} ${styles.aiLabel}`}>
+                                <span>AI Polished / 优化后</span>
+                                {/* 当显示骨架屏时，右上角的文字提示也可以变化 */}
+                                {isRetrying && <span style={{ opacity: 0.8, fontWeight: 400 }}>思考中...</span>}
                             </span>
+                            
                             <div className={styles.aiContentBox}>
-                                <div dangerouslySetInnerHTML={{ __html: polishedText }} />
+                                {/* 🔥 核心逻辑修改：重写时显示骨架屏，否则显示文本 */}
+                                {isRetrying ? (
+                                    <div className={styles.skeletonContainer}>
+                                        {/* 渲染 5 行骨架条 */}
+                                        <div className={styles.skeletonLine} />
+                                        <div className={styles.skeletonLine} />
+                                        <div className={styles.skeletonLine} />
+                                        <div className={styles.skeletonLine} />
+                                        <div className={styles.skeletonLine} />
+                                    </div>
+                                ) : (
+                                    <div dangerouslySetInnerHTML={{ __html: polishedText }} />
+                                )}
                             </div>
                         </div>
                     </div>
@@ -58,10 +74,16 @@ export const AIPolishModal = ({
                     
                     <button onClick={onRetry} disabled={isRetrying} className={`${styles.btn} ${styles.btnRetry}`}>
                         <RefreshCw size={16} className={isRetrying ? styles.spin : ""} />
-                        不满意，重写
+                        {isRetrying ? "优化中..." : "不满意，重写"}
                     </button>
 
-                    <button onClick={onAccept} className={`${styles.btn} ${styles.btnAccept}`}>
+                    <button 
+                        onClick={onAccept} 
+                        /* 正在加载时禁用采纳按钮 */
+                        disabled={isRetrying} 
+                        className={`${styles.btn} ${styles.btnAccept}`}
+                        style={isRetrying ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                    >
                         <Check size={16} />
                         采纳并替换
                     </button>

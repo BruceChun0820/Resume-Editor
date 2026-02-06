@@ -123,7 +123,7 @@ export const RichEditor = ({ content, onChange }: RichEditorProps) => {
                     <div className={styles.divider} />
                     <AIPolishButton 
                         className={styles.aiButton}
-                        text={editor.getText()}
+                        text={editor.getHTML()}
                         onPolished={(newContent) => {
                             // 使用 setContent 更新内容，parseOptions 确保 HTML 被正确解析
                             editor.commands.setContent(newContent);
