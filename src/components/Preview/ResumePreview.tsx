@@ -20,7 +20,7 @@ interface ResumePreviewProps {
 export const ResumePreview = ({ resume }: ResumePreviewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  usePreviewLayout(containerRef, resume);
+  usePreviewLayout(containerRef);
 
   const basicSection = resume.sections.basic as BasicsSection;
   const { data: basicData, items: basicItems } = basicSection;
