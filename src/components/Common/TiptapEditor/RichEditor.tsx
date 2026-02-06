@@ -1,7 +1,8 @@
+// src/components/Common/TiptapEditor/RichEditor.tsx
 import { useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 
-// 🔥 1. 显式引入基础扩展，替代 StarterKit
+// 基础扩展
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
@@ -11,40 +12,29 @@ import History from '@tiptap/extension-history';
 import BulletList from '@tiptap/extension-bullet-list';
 import OrderedList from '@tiptap/extension-ordered-list';
 import ListItem from '@tiptap/extension-list-item';
-
-// 原有的扩展
 import UnderlineExtension from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 
 import {
     Bold as BoldIcon, Italic as ItalicIcon, List, ListOrdered, Underline,
-    AlignCenter, AlignJustify, AlignLeft, AlignRight,
-    Sparkles
+    AlignCenter, AlignJustify, AlignLeft, AlignRight
 } from 'lucide-react';
+
+import { AIPolishButton } from '@/components/AI/AIPolish/AIPolishButton/AIPolishButton';
+
 import styles from './RichEditor.module.css';
 
 interface RichEditorProps {
     content: string;
     onChange: (html: string) => void;
-    onAiPolish?: () => void;
 }
 
-export const RichEditor = ({ content, onChange, onAiPolish }: RichEditorProps) => {
+export const RichEditor = ({ content, onChange }: RichEditorProps) => {
 
-    // 🔥 2. 在这里显式定义扩展列表
-    // 这样我们 100% 确定里面有什么，绝对不会有重复的 'underline'
     const editor = useEditor({
         extensions: [
-            Document,
-            Paragraph,
-            Text,
-            History, // 撤销/重做功能
-            Bold,
-            Italic,
-            UnderlineExtension, // 你的下划线扩展
-            BulletList,
-            OrderedList,
-            ListItem,
+            Document, Paragraph, Text, History, Bold, Italic, UnderlineExtension,
+            BulletList, OrderedList, ListItem,
             TextAlign.configure({
                 types: ['heading', 'paragraph'],
                 alignments: ['left', 'center', 'right', 'justify'],
@@ -57,8 +47,7 @@ export const RichEditor = ({ content, onChange, onAiPolish }: RichEditorProps) =
                 class: 'prose-content focus:outline-none',
             },
         },
-        // 关键配置：解决 React StrictMode 下的双重渲染警告
-        immediatelyRender: false, 
+        immediatelyRender: false,
         onUpdate: ({ editor }) => {
             const html = editor.getHTML();
             if (html !== content) {
@@ -67,7 +56,6 @@ export const RichEditor = ({ content, onChange, onAiPolish }: RichEditorProps) =
         },
     });
 
-    // 监听外部 content 变化同步到编辑器
     useEffect(() => {
         if (editor && content !== editor.getHTML()) {
             editor.commands.setContent(content);
@@ -107,6 +95,7 @@ export const RichEditor = ({ content, onChange, onAiPolish }: RichEditorProps) =
     return (
         <div className={styles.container}>
             <div className={styles.toolbar}>
+                {/* 左侧：常规格式化工具 */}
                 <div className={styles.toolbarLeft}>
                     {toolbarConfig.map((group, index) => (
                         <div key={group.group} className={styles.btnGroup}>
@@ -129,19 +118,20 @@ export const RichEditor = ({ content, onChange, onAiPolish }: RichEditorProps) =
                     ))}
                 </div>
 
-                {onAiPolish && (
-                    <div className={styles.toolbarRight}>
-                        <div className={styles.divider} />
-                        <button
-                            className={styles.aiButton}
-                            onClick={onAiPolish}
-                            type="button"
-                        >
-                            <Sparkles size={14} />
-                            <span>AI 润色</span>
-                        </button>
-                    </div>
-                )}
+                {/* 右侧：AI 润色按钮 */}
+                <div className={styles.toolbarRight}>
+                    <div className={styles.divider} />
+                    <AIPolishButton 
+                        className={styles.aiButton}
+                        text={editor.getText()}
+                        onPolished={(newContent) => {
+                            // 使用 setContent 更新内容，parseOptions 确保 HTML 被正确解析
+                            editor.commands.setContent(newContent);
+                            // 触发 onChange 通知父组件
+                            onChange(editor.getHTML()); 
+                        }}
+                    />
+                </div>
             </div>
             <EditorContent editor={editor} className={styles.editorContent} />
         </div>

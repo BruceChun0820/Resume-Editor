@@ -58,8 +58,6 @@ export const TextSectionEditor = ({
                 <RichEditor
                     content={content || ''}
                     onChange={handleContentChange}
-                    // AI 功能暂时保留接口，后续开发
-                    onAiPolish={() => console.log('AI Polish triggered')} 
                 />
             </div>
         </div>

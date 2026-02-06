@@ -29,6 +29,7 @@ select {
    ========================================= */
 :root {
   /* --- 灰色系 --- */
+  --white: #ffffff;
   --gray-50: #f9fafb;
   --gray-100: #f3f4f6;
   --gray-200: #e5e7eb;
@@ -74,6 +75,9 @@ select {
   --color-info-hover: #2563eb;
   --color-info-bg: #eff6ff;
   --color-info-border: #bfdbfe;
+
+  --purple-500: #a855f7;
+  --pink-500: #ec4899;
 }
 
 /* =========================================

@@ -1,0 +1,52 @@
+/* src/components/AI/AIPolish/AIPolishButton/AIPolishButton.module.css */
+
+.button {
+    /* 布局：让内部图标和文字居中 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    
+    /* 尺寸 */
+    padding: 0 12px;
+    height: 28px; /* 固定高度，和编辑器工具栏匹配 */
+    
+    /* 外观：紫色渐变 */
+    background: linear-gradient(90deg, var(--purple-500, #a855f7) 0%, var(--pink-500, #ec4899) 100%);
+    border: none;
+    border-radius: 999px; /* 全圆角 */
+    
+    /* 字体 */
+    color: #ffffff;
+    font-size: 0.75rem; /* 12px */
+    font-weight: 600;
+    
+    /* 交互 */
+    cursor: pointer;
+    transition: all 0.2s;
+    
+    /* ⚡️ 核心：防止文字被挤压换行 */
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.button:hover {
+    opacity: 0.9;
+    box-shadow: 0 2px 4px rgba(168, 85, 247, 0.2);
+}
+
+.button:disabled {
+    cursor: wait;
+    opacity: 0.8;
+}
+
+/* 旋转动画 */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 选中按钮内的 Loader 图标 */
+.button :global(.lucide-loader-2) {
+    animation: spin 1s linear infinite;
+}
